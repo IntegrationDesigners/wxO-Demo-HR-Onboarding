@@ -40,7 +40,7 @@ guidelines:
   action: Send a message to the Slack channel titled "onboarding" using the Slack
     messaging agent. The message should include the changes made and an overview of
     the employee's new onboarding status.
-  tool: Agentic_workflow_9_8339hZ
+  tool: onboarding_send_slack_message
 collaborators: []
 tools:
 - onboarding-app:update_cv_status

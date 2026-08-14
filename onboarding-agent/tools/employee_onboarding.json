@@ -715,7 +715,7 @@
           "spec": {
             "kind": "tool",
             "name": "tool_fd4b3c",
-            "tool": "Agentic_workflow_9_8339hZ:7bd5fa82-34d6-4493-b2b8-eb2e4cdee7ea",
+            "tool": "onboarding_send_slack_message",
             "position": {
               "x": 300,
               "y": 1724
