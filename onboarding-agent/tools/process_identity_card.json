@@ -1,0 +1,3025 @@
+{
+  "spec": {
+    "kind": "flow",
+    "name": "process_identity_card",
+    "description": "Extracts personal information from identity card documents for employee onboarding",
+    "schedulable": false,
+    "display_name": "Process Identity Card",
+    "input_schema": {
+      "$ref": "#/schemas/process_identity_card_input"
+    }
+  },
+  "edges": [
+    {
+      "end": "extract_identity_data",
+      "start": "__start__"
+    },
+    {
+      "end": "format_identity_output",
+      "start": "extract_identity_data"
+    },
+    {
+      "end": "__end__",
+      "start": "format_identity_output"
+    }
+  ],
+  "nodes": {
+    "__end__": {
+      "spec": {
+        "kind": "end",
+        "name": "__end__",
+        "display_name": "__end__"
+      }
+    },
+    "__start__": {
+      "spec": {
+        "kind": "start",
+        "name": "__start__",
+        "display_name": "__start__"
+      }
+    },
+    "extract_identity_data": {
+      "spec": {
+        "kind": "docproc",
+        "name": "extract_identity_data",
+        "task": "text_extraction",
+        "enable_hw": true,
+        "kvp_schemas": [
+          {
+            "fields": {
+              "sex": {
+                "default": "",
+                "example": "M",
+                "description": "The sex or gender of the person (M/F/X)"
+              },
+              "name": {
+                "default": "",
+                "example": "Smith",
+                "description": "The surname or family name of the person"
+              },
+              "given_name": {
+                "default": "",
+                "example": "John",
+                "description": "The first name or given name of the person"
+              },
+              "nationality": {
+                "default": "",
+                "example": "Belgian",
+                "description": "The nationality or citizenship of the person"
+              },
+              "date_of_birth": {
+                "default": "",
+                "example": "15.03.1990",
+                "description": "The date of birth of the person"
+              },
+              "expiration_date": {
+                "default": "",
+                "example": "15 03 2030",
+                "description": "The expiration date of the identity card"
+              },
+              "national_register_number": {
+                "default": "",
+                "example": "90.03.15-123.45",
+                "description": "The national register number or identification number"
+              }
+            },
+            "document_type": "Identity Card",
+            "document_description": "A government-issued identity card containing personal identification information",
+            "additional_prompt_instructions": "Extract all values exactly as they appear in the document. Pay special attention to dates and identification numbers."
+          }
+        ],
+        "display_name": "extract_identity_data",
+        "input_schema": {
+          "$ref": "#/schemas/extract_identity_data_input"
+        },
+        "output_format": "object",
+        "output_schema": {
+          "$ref": "#/schemas/TextExtractionObjectResponse"
+        },
+        "document_structure": true,
+        "kvp_enable_text_hints": true,
+        "kvp_force_schema_name": "Identity Card"
+      },
+      "input_map": {
+        "spec": {
+          "maps": [
+            {
+              "metadata": {
+                "assignmentType": "pyExpression"
+              },
+              "has_no_value": false,
+              "default_value": null,
+              "target_variable": "self.input.document_ref",
+              "value_expression": "flow.input.document_ref"
+            },
+            {
+              "metadata": {
+                "assignmentType": "pyExpression"
+              },
+              "has_no_value": false,
+              "default_value": null,
+              "target_variable": "self.input.kvp_schemas",
+              "value_expression": "flow.input.kvp_schemas"
+            }
+          ]
+        }
+      }
+    },
+    "format_identity_output": {
+      "spec": {
+        "kind": "prompt",
+        "name": "format_identity_output",
+        "user_prompt": [
+          "Format the following identity card data into a structured output with all fields and a human-readable summary:\n\nExtracted KVPs: {kvps}, Convert the gender to a letter (M/F/X)"
+        ],
+        "display_name": "format_identity_output",
+        "output_schema": {
+          "$ref": "#/schemas/IdentityCardOutput"
+        },
+        "system_prompt": "You are a helpful assistant that formats extracted identity card data into structured JSON. Extract the values from the KVP array and create a clear summary."
+      },
+      "input_map": {
+        "spec": {
+          "maps": [
+            {
+              "metadata": {
+                "assignmentType": "pyExpression"
+              },
+              "has_no_value": false,
+              "default_value": null,
+              "target_variable": "self.input.kvps",
+              "value_expression": "flow['extract_identity_data'].output.kvps"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "schemas": {
+    "IdentityCardOutput": {
+      "type": "object",
+      "title": "IdentityCardOutput",
+      "required": [
+        "name",
+        "given_name",
+        "sex",
+        "nationality",
+        "date_of_birth",
+        "national_register_number",
+        "expiration_date",
+        "summary"
+      ],
+      "properties": {
+        "sex": {
+          "type": "string",
+          "title": "Sex",
+          "description": "Sex or gender"
+        },
+        "name": {
+          "type": "string",
+          "title": "Name",
+          "description": "Surname or family name"
+        },
+        "summary": {
+          "type": "string",
+          "title": "Summary",
+          "description": "Human-readable summary of the extracted information"
+        },
+        "given_name": {
+          "type": "string",
+          "title": "Given Name",
+          "description": "First name or given name"
+        },
+        "nationality": {
+          "type": "string",
+          "title": "Nationality",
+          "description": "Nationality or citizenship"
+        },
+        "date_of_birth": {
+          "type": "string",
+          "title": "Date Of Birth",
+          "description": "Date of birth"
+        },
+        "expiration_date": {
+          "type": "string",
+          "title": "Expiration Date",
+          "description": "Expiration date of the card"
+        },
+        "national_register_number": {
+          "type": "string",
+          "title": "National Register Number",
+          "description": "National register number"
+        }
+      },
+      "description": "Structured output for identity card information."
+    },
+    "extract_identity_data_input": {
+      "type": "object",
+      "title": "extract_identity_data_input",
+      "required": [],
+      "properties": {
+        "kvp_schemas": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "title": "DocProcKVPSchema",
+                "required": [
+                  "document_type",
+                  "document_description",
+                  "fields"
+                ],
+                "properties": {
+                  "fields": {
+                    "type": "object",
+                    "title": "Fields",
+                    "description": "The fields to extract from the document. These are the keys in the KVP extraction result.",
+                    "additionalProperties": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "title": "DocProcField",
+                          "required": [
+                            "description"
+                          ],
+                          "properties": {
+                            "default": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ],
+                              "title": "Default",
+                              "default": "",
+                              "description": "A default value for the field to extract from the document."
+                            },
+                            "example": {
+                              "type": "string",
+                              "title": "Example",
+                              "default": "",
+                              "description": "An example of the field to extract from the document."
+                            },
+                            "description": {
+                              "type": "string",
+                              "title": "Description",
+                              "description": "A description of the field to extract from the document."
+                            },
+                            "available_options": {
+                              "anyOf": [
+                                {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ],
+                              "title": "Available Options",
+                              "default": null,
+                              "description": "A list of possible values for the field."
+                            }
+                          }
+                        },
+                        {
+                          "type": "object",
+                          "title": "DocProcTable",
+                          "required": [
+                            "type",
+                            "description",
+                            "columns"
+                          ],
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "array",
+                              "title": "Type"
+                            },
+                            "columns": {
+                              "type": "object",
+                              "title": "Columns",
+                              "description": "The columns to extract from the table. These are the keys in the table extraction result.",
+                              "additionalProperties": {
+                                "type": "object",
+                                "title": "DocProcField",
+                                "required": [
+                                  "description"
+                                ],
+                                "properties": {
+                                  "default": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ],
+                                    "title": "Default",
+                                    "default": "",
+                                    "description": "A default value for the field to extract from the document."
+                                  },
+                                  "example": {
+                                    "type": "string",
+                                    "title": "Example",
+                                    "default": "",
+                                    "description": "An example of the field to extract from the document."
+                                  },
+                                  "description": {
+                                    "type": "string",
+                                    "title": "Description",
+                                    "description": "A description of the field to extract from the document."
+                                  },
+                                  "available_options": {
+                                    "anyOf": [
+                                      {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        }
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ],
+                                    "title": "Available Options",
+                                    "default": null,
+                                    "description": "A list of possible values for the field."
+                                  }
+                                }
+                              }
+                            },
+                            "description": {
+                              "type": "string",
+                              "title": "Description",
+                              "description": "A description of the table to extract from the document."
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "document_type": {
+                    "type": "string",
+                    "title": "Document Type",
+                    "description": "A label for the kind of documents we want to extract"
+                  },
+                  "document_description": {
+                    "type": "string",
+                    "title": "Document Description",
+                    "description": "A description of the kind of documents we want to extractI. This is used to select which schema to use for extraction."
+                  },
+                  "additional_prompt_instructions": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Additional Prompt Instructions",
+                    "description": "Additional instructions to guide the extraction. This is used to provide more context to the model about the document."
+                  }
+                }
+              }
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "KVP schemas",
+          "description": "Optional list of key-value pair schemas to use for extraction."
+        },
+        "document_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "binary"
+            },
+            {
+              "type": "string",
+              "title": "File reference",
+              "format": "wxo-file",
+              "description": "A URL identifying the File to be used."
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Document reference",
+          "format": "binary",
+          "description": "Either an ID or a URL identifying the document to be used."
+        },
+        "kvp_model_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "KVP Model Name",
+          "description": "The LLM model to be used for key-value pair extraction"
+        },
+        "kvp_enable_text_hints": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "KVP Enable Text Hints",
+          "default": true,
+          "description": "Determines whether to use text hints such as the text and layout information extracted from the document when extracting values in addition to the page image (True), or just rely on the page image itself (False)"
+        },
+        "kvp_force_schema_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "KVP Force Schema Name",
+          "description": "Forces the kvp extractor to use a specified schema directly for value extraction by setting the schema document_type."
+        }
+      }
+    },
+    "process_identity_card_input": {
+      "type": "object",
+      "title": "process_identity_card_input",
+      "required": [],
+      "properties": {
+        "kvp_schemas": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "title": "DocProcKVPSchema",
+                "required": [
+                  "document_type",
+                  "document_description",
+                  "fields"
+                ],
+                "properties": {
+                  "fields": {
+                    "type": "object",
+                    "title": "Fields",
+                    "description": "The fields to extract from the document. These are the keys in the KVP extraction result.",
+                    "additionalProperties": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "title": "DocProcField",
+                          "required": [
+                            "description"
+                          ],
+                          "properties": {
+                            "default": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ],
+                              "title": "Default",
+                              "default": "",
+                              "description": "A default value for the field to extract from the document."
+                            },
+                            "example": {
+                              "type": "string",
+                              "title": "Example",
+                              "default": "",
+                              "description": "An example of the field to extract from the document."
+                            },
+                            "description": {
+                              "type": "string",
+                              "title": "Description",
+                              "description": "A description of the field to extract from the document."
+                            },
+                            "available_options": {
+                              "anyOf": [
+                                {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ],
+                              "title": "Available Options",
+                              "default": null,
+                              "description": "A list of possible values for the field."
+                            }
+                          }
+                        },
+                        {
+                          "type": "object",
+                          "title": "DocProcTable",
+                          "required": [
+                            "type",
+                            "description",
+                            "columns"
+                          ],
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "array",
+                              "title": "Type"
+                            },
+                            "columns": {
+                              "type": "object",
+                              "title": "Columns",
+                              "description": "The columns to extract from the table. These are the keys in the table extraction result.",
+                              "additionalProperties": {
+                                "type": "object",
+                                "title": "DocProcField",
+                                "required": [
+                                  "description"
+                                ],
+                                "properties": {
+                                  "default": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ],
+                                    "title": "Default",
+                                    "default": "",
+                                    "description": "A default value for the field to extract from the document."
+                                  },
+                                  "example": {
+                                    "type": "string",
+                                    "title": "Example",
+                                    "default": "",
+                                    "description": "An example of the field to extract from the document."
+                                  },
+                                  "description": {
+                                    "type": "string",
+                                    "title": "Description",
+                                    "description": "A description of the field to extract from the document."
+                                  },
+                                  "available_options": {
+                                    "anyOf": [
+                                      {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        }
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ],
+                                    "title": "Available Options",
+                                    "default": null,
+                                    "description": "A list of possible values for the field."
+                                  }
+                                }
+                              }
+                            },
+                            "description": {
+                              "type": "string",
+                              "title": "Description",
+                              "description": "A description of the table to extract from the document."
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "document_type": {
+                    "type": "string",
+                    "title": "Document Type",
+                    "description": "A label for the kind of documents we want to extract"
+                  },
+                  "document_description": {
+                    "type": "string",
+                    "title": "Document Description",
+                    "description": "A description of the kind of documents we want to extractI. This is used to select which schema to use for extraction."
+                  },
+                  "additional_prompt_instructions": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Additional Prompt Instructions",
+                    "description": "Additional instructions to guide the extraction. This is used to provide more context to the model about the document."
+                  }
+                }
+              }
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "KVP schemas",
+          "description": "Optional list of key-value pair schemas to use for extraction."
+        },
+        "document_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "binary"
+            },
+            {
+              "type": "string",
+              "title": "File reference",
+              "format": "wxo-file",
+              "description": "A URL identifying the File to be used."
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Document reference",
+          "format": "binary",
+          "description": "Either an ID or a URL identifying the document to be used."
+        },
+        "kvp_model_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "KVP Model Name",
+          "description": "The LLM model to be used for key-value pair extraction"
+        },
+        "kvp_enable_text_hints": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "KVP Enable Text Hints",
+          "default": true,
+          "description": "Determines whether to use text hints such as the text and layout information extracted from the document when extracting values in addition to the page image (True), or just rely on the page image itself (False)"
+        },
+        "kvp_force_schema_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "KVP Force Schema Name",
+          "description": "Forces the kvp extractor to use a specified schema directly for value extraction by setting the schema document_type."
+        }
+      }
+    },
+    "TextExtractionObjectResponse": {
+      "type": "object",
+      "title": "TextExtractionObjectResponse",
+      "required": [
+        "text"
+      ],
+      "properties": {
+        "kvps": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "title": "DocProcKVP",
+                "required": [
+                  "id",
+                  "type",
+                  "key",
+                  "value"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "title": "Id",
+                    "description": "A unique identifier for the key-value pair."
+                  },
+                  "key": {
+                    "type": "object",
+                    "title": "DocProcKey",
+                    "required": [
+                      "id",
+                      "raw_text",
+                      "semantic_label"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "title": "Id",
+                        "description": "A unique identifier."
+                      },
+                      "bbox": {
+                        "anyOf": [
+                          {
+                            "type": "object",
+                            "title": "DocProcBoundingBox",
+                            "required": [
+                              "x",
+                              "y",
+                              "width",
+                              "height",
+                              "page_number"
+                            ],
+                            "properties": {
+                              "x": {
+                                "type": "number",
+                                "title": "X",
+                                "description": "The x coordinate of the bounding box."
+                              },
+                              "y": {
+                                "type": "number",
+                                "title": "Y",
+                                "description": "The y coordinate of the bounding box."
+                              },
+                              "width": {
+                                "type": "number",
+                                "title": "Width",
+                                "description": "The width of the bounding box."
+                              },
+                              "height": {
+                                "type": "number",
+                                "title": "Height",
+                                "description": "The height of the bounding box."
+                              },
+                              "page_number": {
+                                "type": "integer",
+                                "title": "Page Number",
+                                "description": "The page number of the bounding box in the document."
+                              }
+                            }
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "description": "The bounding box in the document."
+                      },
+                      "raw_text": {
+                        "type": "string",
+                        "title": "Raw Text",
+                        "description": "The raw text."
+                      },
+                      "semantic_label": {
+                        "type": "string",
+                        "title": "Semantic Label",
+                        "description": "A semantic label for the key."
+                      },
+                      "normalized_text": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "title": "Normalized Text",
+                        "description": "The normalized text."
+                      },
+                      "confidence_score": {
+                        "anyOf": [
+                          {
+                            "type": "number"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "title": "Confidence Score",
+                        "description": "The confidence score."
+                      }
+                    },
+                    "description": "The key of the key-value pair."
+                  },
+                  "type": {
+                    "enum": [
+                      "key_value",
+                      "only_value"
+                    ],
+                    "type": "string",
+                    "title": "Type"
+                  },
+                  "value": {
+                    "type": "object",
+                    "title": "DocProcValue",
+                    "required": [
+                      "id",
+                      "raw_text"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "title": "Id",
+                        "description": "A unique identifier."
+                      },
+                      "bbox": {
+                        "anyOf": [
+                          {
+                            "type": "object",
+                            "title": "DocProcBoundingBox",
+                            "required": [
+                              "x",
+                              "y",
+                              "width",
+                              "height",
+                              "page_number"
+                            ],
+                            "properties": {
+                              "x": {
+                                "type": "number",
+                                "title": "X",
+                                "description": "The x coordinate of the bounding box."
+                              },
+                              "y": {
+                                "type": "number",
+                                "title": "Y",
+                                "description": "The y coordinate of the bounding box."
+                              },
+                              "width": {
+                                "type": "number",
+                                "title": "Width",
+                                "description": "The width of the bounding box."
+                              },
+                              "height": {
+                                "type": "number",
+                                "title": "Height",
+                                "description": "The height of the bounding box."
+                              },
+                              "page_number": {
+                                "type": "integer",
+                                "title": "Page Number",
+                                "description": "The page number of the bounding box in the document."
+                              }
+                            }
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "description": "The bounding box in the document."
+                      },
+                      "raw_text": {
+                        "type": "string",
+                        "title": "Raw Text",
+                        "description": "The raw text."
+                      },
+                      "normalized_text": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "title": "Normalized Text",
+                        "description": "The normalized text."
+                      },
+                      "confidence_score": {
+                        "anyOf": [
+                          {
+                            "type": "number"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "title": "Confidence Score",
+                        "description": "The confidence score."
+                      }
+                    },
+                    "description": "The value of the key-value pair."
+                  },
+                  "group_id": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Group Id",
+                    "description": "The group id of the key-value pair. This is used to group key-value pairs together."
+                  },
+                  "table_id": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Table Id",
+                    "description": "The table id of the key-value pair. This is used to group key-value pairs together in a table."
+                  },
+                  "table_name": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Table Name",
+                    "description": "The name of the table the key-value pair belongs to. This is used to group key-value pairs together in a table."
+                  },
+                  "table_row_index": {
+                    "anyOf": [
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "title": "Table Row Index",
+                    "description": "The index of the row in the table the key-value pair belongs to. This is used to group key-value pairs together in a table."
+                  }
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Kvps",
+          "description": "Key-value pairs extracted from the document using LLM-based extraction. Includes form fields and semantic relationships with spatial information. None if KVP extraction (kvp_schemas) was not requested or configured."
+        },
+        "text": {
+          "type": "string",
+          "title": "Text",
+          "description": "The raw text extracted from the input document"
+        },
+        "styles": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "title": "Style",
+                "properties": {
+                  "is_bold": {
+                    "type": "string",
+                    "title": "Is Bold",
+                    "default": "",
+                    "description": "Whether or not the the font is bold"
+                  },
+                  "style_id": {
+                    "type": "string",
+                    "title": "Style Id",
+                    "default": "",
+                    "description": "Style Identifier which will be used for reference in other objects"
+                  },
+                  "font_name": {
+                    "type": "string",
+                    "title": "Font Name",
+                    "default": "",
+                    "description": "Font name"
+                  },
+                  "font_size": {
+                    "type": "string",
+                    "title": "Font Size",
+                    "default": "",
+                    "description": "Font size"
+                  },
+                  "is_italic": {
+                    "type": "string",
+                    "title": "Is Italic",
+                    "default": "",
+                    "description": "Whether or not the the font is italic"
+                  }
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Styles",
+          "description": "Font styles used in the document, referenced by style_id from tokens. Includes font name, size, bold, and italic attributes. None if style extraction (document_structure=False) was not requested."
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "type": "object",
+              "title": "Metadata",
+              "required": [
+                "num_pages"
+              ],
+              "properties": {
+                "url": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Url",
+                  "description": "URL of the document"
+                },
+                "title": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Title",
+                  "description": "Document title as obtained from source document"
+                },
+                "author": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Author",
+                  "description": "Author of the document"
+                },
+                "charset": {
+                  "type": "string",
+                  "title": "Charset",
+                  "default": "",
+                  "description": "Character set used for the output"
+                },
+                "subject": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Subject",
+                  "description": "Subject as obtained from the source document"
+                },
+                "keywords": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Keywords",
+                  "description": "Keywords associated with document"
+                },
+                "language": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Language",
+                  "description": "Determined by the lang specifier in the <html> tag, or <meta> tag"
+                },
+                "num_pages": {
+                  "type": "integer",
+                  "title": "Num Pages",
+                  "description": "Total number of pages in the document"
+                },
+                "pages_metadata": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "title": "PageMetadata",
+                        "properties": {
+                          "dpi": {
+                            "anyOf": [
+                              {
+                                "type": "integer"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "title": "Dpi",
+                            "description": "The DPI to use for the page image, as specified in the input to the API"
+                          },
+                          "page_number": {
+                            "anyOf": [
+                              {
+                                "type": "integer"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "title": "Page Number",
+                            "description": "Page number, starting from 1"
+                          },
+                          "document_type": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "title": "Document Type",
+                            "default": "",
+                            "description": "Document type"
+                          },
+                          "page_image_width": {
+                            "anyOf": [
+                              {
+                                "type": "integer"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "title": "Page Image Width",
+                            "description": "Width of the page in pixels, assuming the page is an image with default 72 DPI"
+                          },
+                          "page_image_height": {
+                            "anyOf": [
+                              {
+                                "type": "integer"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "title": "Page Image Height",
+                            "description": "Height of the page in pixels, assuming the page is an image with default 72 DPI"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Pages Metadata",
+                  "default": [],
+                  "description": "List of page-level metadata objects"
+                },
+                "publication_date": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Publication Date",
+                  "description": "Best effort bases for a publication date (may be the creation date)"
+                },
+                "output_tokens_flag": {
+                  "anyOf": [
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Output Tokens Flag",
+                  "description": "Whether individual tokens are output, as specified in the input to the API"
+                },
+                "output_bounding_boxes_flag": {
+                  "anyOf": [
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Output Bounding Boxes Flag",
+                  "description": "Whether bounding boxes are output, as requested in the input to the API"
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Document-level metadata including page count, title, author, language, and processing configuration. None if metadata extraction was not requested."
+        },
+        "all_structures": {
+          "anyOf": [
+            {
+              "type": "object",
+              "title": "Structures",
+              "properties": {
+                "lists": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "title": "List_",
+                        "required": [
+                          "id",
+                          "parent_id",
+                          "children_ids"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "title": "Id",
+                            "description": "Unique identifier for the list"
+                          },
+                          "title": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "title": "Title",
+                            "description": "List title"
+                          },
+                          "bbox_list": {
+                            "anyOf": [
+                              {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "title": "DocProcBoundingBox",
+                                  "required": [
+                                    "x",
+                                    "y",
+                                    "width",
+                                    "height",
+                                    "page_number"
+                                  ],
+                                  "properties": {
+                                    "x": {
+                                      "type": "number",
+                                      "title": "X",
+                                      "description": "The x coordinate of the bounding box."
+                                    },
+                                    "y": {
+                                      "type": "number",
+                                      "title": "Y",
+                                      "description": "The y coordinate of the bounding box."
+                                    },
+                                    "width": {
+                                      "type": "number",
+                                      "title": "Width",
+                                      "description": "The width of the bounding box."
+                                    },
+                                    "height": {
+                                      "type": "number",
+                                      "title": "Height",
+                                      "description": "The height of the bounding box."
+                                    },
+                                    "page_number": {
+                                      "type": "integer",
+                                      "title": "Page Number",
+                                      "description": "The page number of the bounding box in the document."
+                                    }
+                                  }
+                                }
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "title": "Bbox List",
+                            "description": "Cross-pages bounding boxes of that table"
+                          },
+                          "parent_id": {
+                            "type": "string",
+                            "title": "Parent Id",
+                            "description": "Unique identifier which denotes parent of this structure"
+                          },
+                          "children_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            },
+                            "title": "Children Ids",
+                            "description": "Unique Ids of first level children structures under this structure in correct sequence"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Lists",
+                  "description": "All List objects found in the document"
+                },
+                "tables": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "title": "Table",
+                        "required": [
+                          "id",
+                          "parent_id",
+                          "children_ids"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "title": "Id",
+                            "description": "Unique identifier for the table"
+                          },
+                          "bbox_list": {
+                            "anyOf": [
+                              {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "title": "DocProcBoundingBox",
+                                  "required": [
+                                    "x",
+                                    "y",
+                                    "width",
+                                    "height",
+                                    "page_number"
+                                  ],
+                                  "properties": {
+                                    "x": {
+                                      "type": "number",
+                                      "title": "X",
+                                      "description": "The x coordinate of the bounding box."
+                                    },
+                                    "y": {
+                                      "type": "number",
+                                      "title": "Y",
+                                      "description": "The y coordinate of the bounding box."
+                                    },
+                                    "width": {
+                                      "type": "number",
+                                      "title": "Width",
+                                      "description": "The width of the bounding box."
+                                    },
+                                    "height": {
+                                      "type": "number",
+                                      "title": "Height",
+                                      "description": "The height of the bounding box."
+                                    },
+                                    "page_number": {
+                                      "type": "integer",
+                                      "title": "Page Number",
+                                      "description": "The page number of the bounding box in the document."
+                                    }
+                                  }
+                                }
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "title": "Bbox List",
+                            "description": "Cross-pages bounding boxes of that table"
+                          },
+                          "parent_id": {
+                            "type": "string",
+                            "title": "Parent Id",
+                            "description": "Unique identifier which denotes parent of this structure"
+                          },
+                          "children_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            },
+                            "title": "Children Ids",
+                            "description": "Unique Ids of first level children structures under this structure in correct sequence, in this case, table rows"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Tables",
+                  "description": "All Table objects found in the document"
+                },
+                "tokens": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "title": "Token",
+                        "required": [
+                          "id",
+                          "text"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "title": "Id",
+                            "description": "Unique identifier for the list identifier"
+                          },
+                          "bbox": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "title": "DocProcBoundingBox",
+                                "required": [
+                                  "x",
+                                  "y",
+                                  "width",
+                                  "height",
+                                  "page_number"
+                                ],
+                                "properties": {
+                                  "x": {
+                                    "type": "number",
+                                    "title": "X",
+                                    "description": "The x coordinate of the bounding box."
+                                  },
+                                  "y": {
+                                    "type": "number",
+                                    "title": "Y",
+                                    "description": "The y coordinate of the bounding box."
+                                  },
+                                  "width": {
+                                    "type": "number",
+                                    "title": "Width",
+                                    "description": "The width of the bounding box."
+                                  },
+                                  "height": {
+                                    "type": "number",
+                                    "title": "Height",
+                                    "description": "The height of the bounding box."
+                                  },
+                                  "page_number": {
+                                    "type": "integer",
+                                    "title": "Page Number",
+                                    "description": "The page number of the bounding box in the document."
+                                  }
+                                }
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "description": "The bounding box of the token in the context of the page, expressed as pixel coordinates with respect to pages_metadata.page_image_height and pages_metadata.page_image_width"
+                          },
+                          "text": {
+                            "type": "string",
+                            "title": "Text",
+                            "description": "Actual text of the token"
+                          },
+                          "style_id": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "title": "Style Id",
+                            "description": "Identifier of the style object associated with this token"
+                          },
+                          "parent_id": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "title": "Parent Id",
+                            "description": "Unique identifier which denotes parent of this structure"
+                          },
+                          "confidence": {
+                            "anyOf": [
+                              {
+                                "type": "number"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "title": "Confidence",
+                            "description": "Confidence score for the token"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Tokens",
+                  "description": "All Token objects found in the document"
+                },
+                "pictures": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "title": "Picture",
+                        "required": [
+                          "id",
+                          "parent_id"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "title": "Id",
+                            "description": "Unique identifier for the picture"
+                          },
+                          "bbox": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "title": "DocProcBoundingBox",
+                                "required": [
+                                  "x",
+                                  "y",
+                                  "width",
+                                  "height",
+                                  "page_number"
+                                ],
+                                "properties": {
+                                  "x": {
+                                    "type": "number",
+                                    "title": "X",
+                                    "description": "The x coordinate of the bounding box."
+                                  },
+                                  "y": {
+                                    "type": "number",
+                                    "title": "Y",
+                                    "description": "The y coordinate of the bounding box."
+                                  },
+                                  "width": {
+                                    "type": "number",
+                                    "title": "Width",
+                                    "description": "The width of the bounding box."
+                                  },
+                                  "height": {
+                                    "type": "number",
+                                    "title": "Height",
+                                    "description": "The height of the bounding box."
+                                  },
+                                  "page_number": {
+                                    "type": "integer",
+                                    "title": "Page Number",
+                                    "description": "The page number of the bounding box in the document."
+                                  }
+                                }
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "description": "The bounding box of the picture in the context of the page, expressed as pixel coordinates with respect to pages_metadata.page_image_height and pages_metadata.page_image_width"
+                          },
+                          "path": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "title": "Path",
+                            "description": "Path in the output location where the picture itself was saved"
+                          },
+                          "text": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "title": "Text",
+                            "description": "Text extracted from this picture"
+                          },
+                          "parent_id": {
+                            "type": "string",
+                            "title": "Parent Id",
+                            "description": "Unique identifier which denotes parent of this structure"
+                          },
+                          "children_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            },
+                            "title": "Children Ids",
+                            "description": "Unique identifiers of the tokens extracted from this picture, if any"
+                          },
+                          "picture_class": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "title": "Picture Class",
+                            "description": "The classification result of the picture"
+                          },
+                          "verbalization": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "title": "Verbalization",
+                            "description": "Verbalization of this picture"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Pictures",
+                  "description": "All Picture objects found in the document"
+                },
+                "sections": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "title": "Section",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "title": "Id",
+                            "default": "",
+                            "description": "Unique identifier for the section"
+                          },
+                          "bbox_list": {
+                            "anyOf": [
+                              {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "title": "DocProcBoundingBox",
+                                  "required": [
+                                    "x",
+                                    "y",
+                                    "width",
+                                    "height",
+                                    "page_number"
+                                  ],
+                                  "properties": {
+                                    "x": {
+                                      "type": "number",
+                                      "title": "X",
+                                      "description": "The x coordinate of the bounding box."
+                                    },
+                                    "y": {
+                                      "type": "number",
+                                      "title": "Y",
+                                      "description": "The y coordinate of the bounding box."
+                                    },
+                                    "width": {
+                                      "type": "number",
+                                      "title": "Width",
+                                      "description": "The width of the bounding box."
+                                    },
+                                    "height": {
+                                      "type": "number",
+                                      "title": "Height",
+                                      "description": "The height of the bounding box."
+                                    },
+                                    "page_number": {
+                                      "type": "integer",
+                                      "title": "Page Number",
+                                      "description": "The page number of the bounding box in the document."
+                                    }
+                                  }
+                                }
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "title": "Bbox List",
+                            "description": "Cross-pages bounding boxes of that section"
+                          },
+                          "parent_id": {
+                            "type": "string",
+                            "title": "Parent Id",
+                            "default": "",
+                            "description": "Unique identifier which denotes parent of this structure"
+                          },
+                          "children_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            },
+                            "title": "Children Ids",
+                            "default": "",
+                            "description": "Unique Ids of first level children structures under this structure in correct sequence"
+                          },
+                          "section_level": {
+                            "type": "string",
+                            "title": "Section Level",
+                            "default": "",
+                            "description": "Nesting level of section identified in the document"
+                          },
+                          "section_number": {
+                            "type": "string",
+                            "title": "Section Number",
+                            "default": "",
+                            "description": "Section identifier identified in the document"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Sections",
+                  "description": "All Section objects found in the document"
+                },
+                "bar_codes": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "title": "BarCode",
+                        "required": [
+                          "id",
+                          "parent_id"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "title": "Id",
+                            "description": "Unique identifier for the bar code"
+                          },
+                          "bbox": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "title": "DocProcBoundingBox",
+                                "required": [
+                                  "x",
+                                  "y",
+                                  "width",
+                                  "height",
+                                  "page_number"
+                                ],
+                                "properties": {
+                                  "x": {
+                                    "type": "number",
+                                    "title": "X",
+                                    "description": "The x coordinate of the bounding box."
+                                  },
+                                  "y": {
+                                    "type": "number",
+                                    "title": "Y",
+                                    "description": "The y coordinate of the bounding box."
+                                  },
+                                  "width": {
+                                    "type": "number",
+                                    "title": "Width",
+                                    "description": "The width of the bounding box."
+                                  },
+                                  "height": {
+                                    "type": "number",
+                                    "title": "Height",
+                                    "description": "The height of the bounding box."
+                                  },
+                                  "page_number": {
+                                    "type": "integer",
+                                    "title": "Page Number",
+                                    "description": "The page number of the bounding box in the document."
+                                  }
+                                }
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "description": "The bounding box of the bar code in the context of the page, expressed as pixel coordinates with respect to pages_metadata.page_image_height and pages_metadata.page_image_width"
+                          },
+                          "path": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "title": "Path",
+                            "description": "Path in the output location where the var code picture is saved"
+                          },
+                          "text": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "title": "Text",
+                            "description": "The value of the bar code"
+                          },
+                          "format": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "title": "Format",
+                            "description": "The format of the bar code"
+                          },
+                          "parent_id": {
+                            "type": "string",
+                            "title": "Parent Id",
+                            "description": "Unique identifier which denotes parent of this structure"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Bar Codes",
+                  "description": "All BarCode objects found in the document"
+                },
+                "footnotes": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "title": "Footnote",
+                        "required": [
+                          "id",
+                          "parent_id",
+                          "text"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "title": "Id",
+                            "description": "Unique identifier for the footnote"
+                          },
+                          "text": {
+                            "type": "string",
+                            "title": "Text",
+                            "description": "Text property added to all objects"
+                          },
+                          "parent_id": {
+                            "type": "string",
+                            "title": "Parent Id",
+                            "description": "Unique identifier which denotes parent of this structure"
+                          },
+                          "children_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            },
+                            "title": "Children Ids",
+                            "description": "Unique Ids of first level children structures under this structure in correct sequence"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Footnotes",
+                  "description": "All Footnote objects found in the document"
+                },
+                "list_items": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "title": "ListItem",
+                        "required": [
+                          "id",
+                          "parent_id",
+                          "text"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "title": "Id",
+                            "description": "Unique identifier for the list item"
+                          },
+                          "bbox": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "title": "DocProcBoundingBox",
+                                "required": [
+                                  "x",
+                                  "y",
+                                  "width",
+                                  "height",
+                                  "page_number"
+                                ],
+                                "properties": {
+                                  "x": {
+                                    "type": "number",
+                                    "title": "X",
+                                    "description": "The x coordinate of the bounding box."
+                                  },
+                                  "y": {
+                                    "type": "number",
+                                    "title": "Y",
+                                    "description": "The y coordinate of the bounding box."
+                                  },
+                                  "width": {
+                                    "type": "number",
+                                    "title": "Width",
+                                    "description": "The width of the bounding box."
+                                  },
+                                  "height": {
+                                    "type": "number",
+                                    "title": "Height",
+                                    "description": "The height of the bounding box."
+                                  },
+                                  "page_number": {
+                                    "type": "integer",
+                                    "title": "Page Number",
+                                    "description": "The page number of the bounding box in the document."
+                                  }
+                                }
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "description": "The bounding box of the list item"
+                          },
+                          "text": {
+                            "type": "string",
+                            "title": "Text",
+                            "description": "Text property added to all objects"
+                          },
+                          "parent_id": {
+                            "type": "string",
+                            "title": "Parent Id",
+                            "description": "Unique identifier which denotes parent of this structure"
+                          },
+                          "children_ids": {
+                            "anyOf": [
+                              {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "title": "Children Ids",
+                            "description": "Unique Ids of first level children structures under this structure in correct sequence"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "List Items",
+                  "description": "All ListItem objects found in the document"
+                },
+                "paragraphs": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "title": "Paragraph",
+                        "required": [
+                          "id",
+                          "parent_id",
+                          "text"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "title": "Id",
+                            "description": "Unique identifier for the paragraph"
+                          },
+                          "text": {
+                            "type": "string",
+                            "title": "Text",
+                            "description": "Text property added to all objects"
+                          },
+                          "bbox_list": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "title": "DocProcBoundingBox",
+                                "required": [
+                                  "x",
+                                  "y",
+                                  "width",
+                                  "height",
+                                  "page_number"
+                                ],
+                                "properties": {
+                                  "x": {
+                                    "type": "number",
+                                    "title": "X",
+                                    "description": "The x coordinate of the bounding box."
+                                  },
+                                  "y": {
+                                    "type": "number",
+                                    "title": "Y",
+                                    "description": "The y coordinate of the bounding box."
+                                  },
+                                  "width": {
+                                    "type": "number",
+                                    "title": "Width",
+                                    "description": "The width of the bounding box."
+                                  },
+                                  "height": {
+                                    "type": "number",
+                                    "title": "Height",
+                                    "description": "The height of the bounding box."
+                                  },
+                                  "page_number": {
+                                    "type": "integer",
+                                    "title": "Page Number",
+                                    "description": "The page number of the bounding box in the document."
+                                  }
+                                }
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "description": "Cross-pages bounding boxes of that Paragraph"
+                          },
+                          "parent_id": {
+                            "type": "string",
+                            "title": "Parent Id",
+                            "description": "Unique identifier which denotes parent of this structure"
+                          },
+                          "indentation": {
+                            "anyOf": [
+                              {
+                                "type": "integer"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "title": "Indentation",
+                            "description": "Paragraph indentation"
+                          },
+                          "children_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            },
+                            "title": "Children Ids",
+                            "description": "Unique Ids of first level children structures under this structure in correct sequence, in this case, tokens"
+                          },
+                          "text_alignment": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "title": "Text Alignment",
+                            "description": "Text alignment of the paragraph"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Paragraphs",
+                  "description": "All Paragraph objects found in the document"
+                },
+                "subscripts": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "title": "Subscript",
+                        "required": [
+                          "id",
+                          "parent_id",
+                          "text"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "title": "Id",
+                            "description": "Unique identifier for the subscript"
+                          },
+                          "text": {
+                            "type": "string",
+                            "title": "Text",
+                            "description": "Text property added to all objects"
+                          },
+                          "parent_id": {
+                            "type": "string",
+                            "title": "Parent Id",
+                            "description": "Unique identifier which denotes parent of this structure"
+                          },
+                          "children_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            },
+                            "title": "Children Ids",
+                            "description": "Unique Ids of first level children structures under this structure in correct sequence"
+                          },
+                          "token_id_ref": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "title": "Token Id Ref",
+                            "description": "Id of the token to which the subscript belongs"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Subscripts",
+                  "description": "All Subscript objects found in the document"
+                },
+                "table_rows": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "title": "TableRow",
+                        "required": [
+                          "id",
+                          "parent_id",
+                          "children_ids"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "title": "Id",
+                            "description": "Unique identifier for the table row"
+                          },
+                          "bbox": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "title": "DocProcBoundingBox",
+                                "required": [
+                                  "x",
+                                  "y",
+                                  "width",
+                                  "height",
+                                  "page_number"
+                                ],
+                                "properties": {
+                                  "x": {
+                                    "type": "number",
+                                    "title": "X",
+                                    "description": "The x coordinate of the bounding box."
+                                  },
+                                  "y": {
+                                    "type": "number",
+                                    "title": "Y",
+                                    "description": "The y coordinate of the bounding box."
+                                  },
+                                  "width": {
+                                    "type": "number",
+                                    "title": "Width",
+                                    "description": "The width of the bounding box."
+                                  },
+                                  "height": {
+                                    "type": "number",
+                                    "title": "Height",
+                                    "description": "The height of the bounding box."
+                                  },
+                                  "page_number": {
+                                    "type": "integer",
+                                    "title": "Page Number",
+                                    "description": "The page number of the bounding box in the document."
+                                  }
+                                }
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "description": "The bounding box of the table row"
+                          },
+                          "parent_id": {
+                            "type": "string",
+                            "title": "Parent Id",
+                            "description": "Unique identifier which denotes parent of this structure"
+                          },
+                          "children_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            },
+                            "title": "Children Ids",
+                            "description": "Unique Ids of first level children structures under this structure in correct sequence, in this case, table cells"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Table Rows",
+                  "description": "All TableRow objects found in the document"
+                },
+                "table_cells": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "title": "TableCell",
+                        "required": [
+                          "id",
+                          "parent_id",
+                          "is_row_header",
+                          "is_col_header",
+                          "col_span",
+                          "row_span",
+                          "col_start",
+                          "row_start",
+                          "text"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "title": "Id",
+                            "description": "Unique identifier for the table cell"
+                          },
+                          "bbox": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "title": "DocProcBoundingBox",
+                                "required": [
+                                  "x",
+                                  "y",
+                                  "width",
+                                  "height",
+                                  "page_number"
+                                ],
+                                "properties": {
+                                  "x": {
+                                    "type": "number",
+                                    "title": "X",
+                                    "description": "The x coordinate of the bounding box."
+                                  },
+                                  "y": {
+                                    "type": "number",
+                                    "title": "Y",
+                                    "description": "The y coordinate of the bounding box."
+                                  },
+                                  "width": {
+                                    "type": "number",
+                                    "title": "Width",
+                                    "description": "The width of the bounding box."
+                                  },
+                                  "height": {
+                                    "type": "number",
+                                    "title": "Height",
+                                    "description": "The height of the bounding box."
+                                  },
+                                  "page_number": {
+                                    "type": "integer",
+                                    "title": "Page Number",
+                                    "description": "The page number of the bounding box in the document."
+                                  }
+                                }
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "description": "The bounding box of the table cell"
+                          },
+                          "text": {
+                            "type": "string",
+                            "title": "Text",
+                            "description": "Text property added to all objects"
+                          },
+                          "col_span": {
+                            "type": "integer",
+                            "title": "Col Span",
+                            "description": "Column span of the cell"
+                          },
+                          "row_span": {
+                            "type": "integer",
+                            "title": "Row Span",
+                            "description": "Row span of the cell"
+                          },
+                          "col_start": {
+                            "type": "integer",
+                            "title": "Col Start",
+                            "description": "Column start of the cell within the table"
+                          },
+                          "parent_id": {
+                            "type": "string",
+                            "title": "Parent Id",
+                            "description": "Unique identifier which denotes parent of this structure"
+                          },
+                          "row_start": {
+                            "type": "integer",
+                            "title": "Row Start",
+                            "description": "Row start of the cell within the table"
+                          },
+                          "children_ids": {
+                            "anyOf": [
+                              {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "title": "Children Ids",
+                            "description": "Children structures, e.g., paragraphs"
+                          },
+                          "is_col_header": {
+                            "type": "boolean",
+                            "title": "Is Col Header",
+                            "description": "Whether the cell is part of column header or not"
+                          },
+                          "is_row_header": {
+                            "type": "boolean",
+                            "title": "Is Row Header",
+                            "description": "Whether the cell is part of row header or not"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Table Cells",
+                  "description": "All TableCell objects found in the document"
+                },
+                "page_footers": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "title": "PageFooter",
+                        "required": [
+                          "id",
+                          "parent_id"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "title": "Id",
+                            "description": "Unique identifier for the page footer"
+                          },
+                          "bbox": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "title": "DocProcBoundingBox",
+                                "required": [
+                                  "x",
+                                  "y",
+                                  "width",
+                                  "height",
+                                  "page_number"
+                                ],
+                                "properties": {
+                                  "x": {
+                                    "type": "number",
+                                    "title": "X",
+                                    "description": "The x coordinate of the bounding box."
+                                  },
+                                  "y": {
+                                    "type": "number",
+                                    "title": "Y",
+                                    "description": "The y coordinate of the bounding box."
+                                  },
+                                  "width": {
+                                    "type": "number",
+                                    "title": "Width",
+                                    "description": "The width of the bounding box."
+                                  },
+                                  "height": {
+                                    "type": "number",
+                                    "title": "Height",
+                                    "description": "The height of the bounding box."
+                                  },
+                                  "page_number": {
+                                    "type": "integer",
+                                    "title": "Page Number",
+                                    "description": "The page number of the bounding box in the document."
+                                  }
+                                }
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "description": "The bounding box of the page footer"
+                          },
+                          "text": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "title": "Text",
+                            "description": "The page footer text"
+                          },
+                          "parent_id": {
+                            "type": "string",
+                            "title": "Parent Id",
+                            "description": "Unique identifier which denotes parent of this structure"
+                          },
+                          "children_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            },
+                            "title": "Children Ids",
+                            "description": "Unique Ids of first level children structures under this structure in correct sequence, in this case, tokens"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Page Footers",
+                  "description": "All PageFooter objects found in the document"
+                },
+                "page_headers": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "title": "PageHeader",
+                        "required": [
+                          "id",
+                          "parent_id"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "title": "Id",
+                            "description": "Unique identifier for the page header"
+                          },
+                          "bbox": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "title": "DocProcBoundingBox",
+                                "required": [
+                                  "x",
+                                  "y",
+                                  "width",
+                                  "height",
+                                  "page_number"
+                                ],
+                                "properties": {
+                                  "x": {
+                                    "type": "number",
+                                    "title": "X",
+                                    "description": "The x coordinate of the bounding box."
+                                  },
+                                  "y": {
+                                    "type": "number",
+                                    "title": "Y",
+                                    "description": "The y coordinate of the bounding box."
+                                  },
+                                  "width": {
+                                    "type": "number",
+                                    "title": "Width",
+                                    "description": "The width of the bounding box."
+                                  },
+                                  "height": {
+                                    "type": "number",
+                                    "title": "Height",
+                                    "description": "The height of the bounding box."
+                                  },
+                                  "page_number": {
+                                    "type": "integer",
+                                    "title": "Page Number",
+                                    "description": "The page number of the bounding box in the document."
+                                  }
+                                }
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "description": "The bounding box of the page header"
+                          },
+                          "text": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "title": "Text",
+                            "description": "The page header text"
+                          },
+                          "parent_id": {
+                            "type": "string",
+                            "title": "Parent Id",
+                            "description": "Unique identifier which denotes parent of this structure"
+                          },
+                          "children_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            },
+                            "title": "Children Ids",
+                            "description": "Unique Ids of first level children structures under this structure in correct sequence, in this case, tokens"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Page Headers",
+                  "description": "All PageHeader objects found in the document"
+                },
+                "superscripts": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "title": "Superscript",
+                        "required": [
+                          "id",
+                          "parent_id",
+                          "footnote_ref",
+                          "text"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "title": "Id",
+                            "description": "Unique identifier for the superscript"
+                          },
+                          "text": {
+                            "type": "string",
+                            "title": "Text",
+                            "description": "Text property added to all objects"
+                          },
+                          "parent_id": {
+                            "type": "string",
+                            "title": "Parent Id",
+                            "description": "Unique identifier which denotes parent of this structure"
+                          },
+                          "children_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            },
+                            "title": "Children Ids",
+                            "description": "Unique Ids of first level children structures under this structure in correct sequence"
+                          },
+                          "footnote_ref": {
+                            "type": "string",
+                            "title": "Footnote Ref",
+                            "description": "Matching footnote id found on the page"
+                          },
+                          "token_id_ref": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "title": "Token Id Ref",
+                            "description": "Id of the token to which the superscript belongs"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Superscripts",
+                  "description": "All Superscript objects found in the document"
+                },
+                "code_snippets": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "title": "CodeSnippet",
+                        "required": [
+                          "id",
+                          "parent_id",
+                          "text"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "title": "Id",
+                            "description": "Unique identifier for the code snippet"
+                          },
+                          "text": {
+                            "type": "string",
+                            "title": "Text",
+                            "description": "Text of the code snippet. It can contain multiple lines, including empty lines or lines with leading spaces."
+                          },
+                          "parent_id": {
+                            "type": "string",
+                            "title": "Parent Id",
+                            "description": "Unique identifier which denotes parent of this structure"
+                          },
+                          "children_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            },
+                            "title": "Children Ids",
+                            "description": "Unique Ids of first level children structures under this structure in correct sequence, in this case, tokens"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Code Snippets",
+                  "description": "All CodeSnippet objects found in the document"
+                },
+                "section_titles": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "title": "SectionTitle",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "title": "Id",
+                            "default": "",
+                            "description": "Unique identifier for the section"
+                          },
+                          "bbox": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "title": "DocProcBoundingBox",
+                                "required": [
+                                  "x",
+                                  "y",
+                                  "width",
+                                  "height",
+                                  "page_number"
+                                ],
+                                "properties": {
+                                  "x": {
+                                    "type": "number",
+                                    "title": "X",
+                                    "description": "The x coordinate of the bounding box."
+                                  },
+                                  "y": {
+                                    "type": "number",
+                                    "title": "Y",
+                                    "description": "The y coordinate of the bounding box."
+                                  },
+                                  "width": {
+                                    "type": "number",
+                                    "title": "Width",
+                                    "description": "The width of the bounding box."
+                                  },
+                                  "height": {
+                                    "type": "number",
+                                    "title": "Height",
+                                    "description": "The height of the bounding box."
+                                  },
+                                  "page_number": {
+                                    "type": "integer",
+                                    "title": "Page Number",
+                                    "description": "The page number of the bounding box in the document."
+                                  }
+                                }
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "description": "The bounding box of the section title"
+                          },
+                          "text": {
+                            "type": "string",
+                            "title": "Text",
+                            "default": "",
+                            "description": "Text property added to all objects"
+                          },
+                          "parent_id": {
+                            "type": "string",
+                            "title": "Parent Id",
+                            "default": "",
+                            "description": "Unique identifier which denotes parent of this structure"
+                          },
+                          "children_ids": {
+                            "anyOf": [
+                              {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "title": "Children Ids",
+                            "description": "Unique Ids of first level children structures under this structure in correct sequence"
+                          },
+                          "text_alignment": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "title": "Text Alignment",
+                            "default": "",
+                            "description": "Text alignment of the section title"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Section Titles",
+                  "description": "All SectionTitle objects found in the document"
+                },
+                "list_identifiers": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "title": "ListIdentifier",
+                        "required": [
+                          "id",
+                          "parent_id",
+                          "children_ids"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "title": "Id",
+                            "description": "Unique identifier for the list item"
+                          },
+                          "parent_id": {
+                            "type": "string",
+                            "title": "Parent Id",
+                            "description": "Unique identifier which denotes parent of this structure"
+                          },
+                          "children_ids": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            },
+                            "title": "Children Ids",
+                            "description": "Unique Ids of first level children structures under this structure in correct sequence"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "List Identifiers",
+                  "description": "All ListIdentifier objects found in the document"
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Comprehensive collection of all document structures organized by type (sections, paragraphs, tables, lists, images, etc.). Each structure includes hierarchical relationships and spatial information. None if structure extraction (document_structure=False) was not requested."
+        },
+        "top_level_structures": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Top Level Structures",
+          "description": "Array of structure IDs for top-level document elements (sections, tables, etc.) that belong directly under the document root. Used to navigate the document hierarchy. None if structure extraction (document_structure=False) was not requested."
+        }
+      },
+      "description": "The text extraction operation response when output_format is set to \"object\".\n\nThis class represents the structured response from a document text extraction operation,\ncontaining both the extracted plain text and the complete document structure metadata\ninherited from AssemblyJsonOutput.\n\nAttributes:\n    text (str): The extracted plain text content from the document. This is the \n               concatenated text from all pages and structures in reading order.\n               Empty string if no text could be extracted.\n\nNote:\n    - This response type is used when DocProcSpec.output_format is set to \n      DocProcOutputFormat.object\n    - For file reference responses, use TextExtractionResponse instead\n    - The text field contains only plain text; structured data is in inherited fields"
+    }
+  },
+  "metadata": {
+    "llm_model": "groq/openai/gpt-oss-120b",
+    "source_kind": "adk/python"
+  },
+  "output_map": {
+    "spec": {
+      "maps": [
+        {
+          "metadata": {
+            "assignmentType": "pyExpression"
+          },
+          "has_no_value": false,
+          "default_value": null,
+          "target_variable": "flow.output.name",
+          "value_expression": "flow['format_identity_output'].output.name"
+        },
+        {
+          "metadata": {
+            "assignmentType": "pyExpression"
+          },
+          "has_no_value": false,
+          "default_value": null,
+          "target_variable": "flow.output.given_name",
+          "value_expression": "flow['format_identity_output'].output.given_name"
+        },
+        {
+          "metadata": {
+            "assignmentType": "pyExpression"
+          },
+          "has_no_value": false,
+          "default_value": null,
+          "target_variable": "flow.output.sex",
+          "value_expression": "flow['format_identity_output'].output.sex"
+        },
+        {
+          "metadata": {
+            "assignmentType": "pyExpression"
+          },
+          "has_no_value": false,
+          "default_value": null,
+          "target_variable": "flow.output.nationality",
+          "value_expression": "flow['format_identity_output'].output.nationality"
+        },
+        {
+          "metadata": {
+            "assignmentType": "pyExpression"
+          },
+          "has_no_value": false,
+          "default_value": null,
+          "target_variable": "flow.output.date_of_birth",
+          "value_expression": "flow['format_identity_output'].output.date_of_birth"
+        },
+        {
+          "metadata": {
+            "assignmentType": "pyExpression"
+          },
+          "has_no_value": false,
+          "default_value": null,
+          "target_variable": "flow.output.national_register_number",
+          "value_expression": "flow['format_identity_output'].output.national_register_number"
+        },
+        {
+          "metadata": {
+            "assignmentType": "pyExpression"
+          },
+          "has_no_value": false,
+          "default_value": null,
+          "target_variable": "flow.output.expiration_date",
+          "value_expression": "flow['format_identity_output'].output.expiration_date"
+        },
+        {
+          "metadata": {
+            "assignmentType": "pyExpression"
+          },
+          "has_no_value": false,
+          "default_value": null,
+          "target_variable": "flow.output.summary",
+          "value_expression": "flow['format_identity_output'].output.summary"
+        }
+      ]
+    }
+  }
+}

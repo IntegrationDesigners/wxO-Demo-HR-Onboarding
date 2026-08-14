@@ -1,0 +1,1080 @@
+{
+  "spec": {
+    "kind": "flow",
+    "name": "onboarding_cv_converter",
+    "initiators": [],
+    "description": "Converts a CV into the integration designers template by extracting comprehensive CV data and populating a Word template",
+    "display_name": "CV Converter",
+    "input_schema": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "start_date": {
+          "type": "string",
+          "format": "date",
+          "default": "",
+          "description": "The start date of a given employee in the format DD-MM-YYYY"
+        }
+      }
+    },
+    "output_schema": {},
+    "private_schema": {}
+  },
+  "edges": [
+    {
+      "id": "bd8cf8eb-bdc4-4110-a25c-aebfff383ad0",
+      "end": "user_flow_6a2eda",
+      "start": "__start__"
+    },
+    {
+      "id": "6b6c59da-94ee-4125-b5f1-329b21b39910",
+      "end": "__end__",
+      "start": "user_flow_6a2eda"
+    }
+  ],
+  "nodes": {
+    "__end__": {
+      "spec": {
+        "kind": "end",
+        "name": "__end__",
+        "position": {
+          "x": 0.8691435183637566,
+          "y": 2362.8971745217596
+        }
+      }
+    },
+    "__start__": {
+      "spec": {
+        "kind": "start",
+        "name": "__start__",
+        "position": {
+          "x": 1,
+          "y": 225.15815211528323
+        }
+      }
+    },
+    "user_flow_6a2eda": {
+      "spec": {
+        "kind": "user_flow",
+        "name": "user_flow_6a2eda",
+        "position": {
+          "x": -176.53695406803794,
+          "y": 600.7226863623519
+        },
+        "dimensions": {
+          "width": 600,
+          "height": 1700.5442365869203
+        },
+        "initiators": [],
+        "display_name": "CV Converter",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "assignees": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "wxo-user"
+              }
+            }
+          }
+        }
+      },
+      "edges": [
+        {
+          "id": "f83bc055-e91b-4c31-85db-30ac01714946",
+          "end": "user_3a7587",
+          "start": "user_flow_6a2eda__start__"
+        },
+        {
+          "id": "b4cfb079-fee1-409e-91b1-5a95d115d560",
+          "end": "user_29cc54",
+          "start": "user_3a7587"
+        },
+        {
+          "id": "861c132c-8b1e-4ca5-a372-a117de2ef388",
+          "end": "tool_4ec117",
+          "start": "user_29cc54"
+        },
+        {
+          "id": "cf4d057f-2def-4702-bd35-b154720814de",
+          "end": "prompt_5892b0",
+          "start": "prompt_30437d"
+        },
+        {
+          "id": "78797563-c772-42dc-80c1-9b0792cbd22b",
+          "end": "user_9fbec9",
+          "start": "user_8c80fd"
+        },
+        {
+          "id": "23630e05-e033-4e6e-8a17-264d187005e8",
+          "end": "branch_86ce65",
+          "start": "user_9fbec9"
+        },
+        {
+          "id": "603ccd31-426f-4858-913b-7b204beb71ce",
+          "end": "user_fa828f",
+          "start": "branch_86ce65",
+          "display_name": "Yes"
+        },
+        {
+          "id": "d5ad2c43-b9bb-4eb0-ac2e-1e3072186562",
+          "end": "user_e1b4da",
+          "start": "branch_86ce65",
+          "display_name": "No"
+        },
+        {
+          "id": "86c0469c-6262-449f-8331-899bb4f3c365",
+          "end": "prompt_283e88",
+          "start": "user_fa828f"
+        },
+        {
+          "id": "084dce3f-ba97-4bdf-9880-1dbebb29877a",
+          "end": "user_flow_6a2eda__end__",
+          "start": "user_e1b4da"
+        },
+        {
+          "id": "459cecf8-e9ec-49d1-9f4b-20445c18295a",
+          "end": "prompt_30437d",
+          "start": "tool_4ec117"
+        },
+        {
+          "id": "93132aac-19b3-4924-9e46-99a4a446b6c7",
+          "end": "user_94059e",
+          "start": "tool_235d3c"
+        },
+        {
+          "id": "b6701bd5-e1ea-461e-b5fc-0677d51d1f8d",
+          "end": "user_flow_6a2eda__end__",
+          "start": "user_94059e"
+        },
+        {
+          "id": "eca9ff9f-e20a-4952-9db2-79baa13e452f",
+          "end": "user_8c80fd",
+          "start": "prompt_5892b0"
+        },
+        {
+          "id": "6c3cf2a8-820a-45fa-93ad-7b3b23bdb9cc",
+          "end": "tool_235d3c",
+          "start": "prompt_283e88"
+        }
+      ],
+      "nodes": {
+        "tool_235d3c": {
+          "spec": {
+            "kind": "tool",
+            "name": "tool_235d3c",
+            "tool": "populate_word_template",
+            "position": {
+              "x": 58.291268961687365,
+              "y": 1374.9370005878618
+            },
+            "description": "Populate a Word document template with data from a JSON string.\n\nThis tool takes a JSON string containing key-value pairs and a Word document\ntemplate (as bytes), then replaces template placeholders with the provided data.\nThe template should use Jinja2 syntax for placeholders (e.g., {{ variable_name }}).",
+            "display_name": "populate_word_template",
+            "input_schema": {
+              "type": "object",
+              "required": [
+                "json_data",
+                "template_bytes"
+              ],
+              "properties": {
+                "json_data": {
+                  "type": "string",
+                  "title": "Json Data",
+                  "description": "A JSON string containing the data to populate the template.\nExample: '{\"name\": \"John Doe\", \"position\": \"Software Engineer\"}'"
+                },
+                "template_bytes": {
+                  "type": "string",
+                  "title": "Template Bytes",
+                  "format": "binary",
+                  "description": "The Word document template as bytes. The template should\ncontain Jinja2-style placeholders like {{ name }}, {{ position }}, etc."
+                }
+              }
+            },
+            "output_schema": {
+              "type": "string",
+              "format": "binary",
+              "description": "The populated Word document as bytes."
+            },
+            "error_handler_config": {
+              "max_retries": 0,
+              "error_message": "Something went wrong while running 'populate_word_template'",
+              "retry_interval": 1000
+            }
+          },
+          "input_map": {
+            "spec": {
+              "maps": [
+                {
+                  "metadata": {
+                    "assignmentType": "variable"
+                  },
+                  "has_no_value": false,
+                  "target_variable": "self.input.template_bytes",
+                  "value_expression": "flow[\"CV Converter\"].Template.output.value"
+                },
+                {
+                  "metadata": {
+                    "assignmentType": "variable"
+                  },
+                  "has_no_value": false,
+                  "target_variable": "self.input.json_data",
+                  "value_expression": "flow[\"CV Converter\"][\"JSON Modifier\"].output.value"
+                }
+              ],
+              "name": "",
+              "fallback_strategy": "ask_the_user"
+            }
+          }
+        },
+        "tool_4ec117": {
+          "spec": {
+            "kind": "tool",
+            "name": "tool_4ec117",
+            "tool": "process_cv:9426f812-e816-4a5e-abec-1b78c4c7a16f",
+            "position": {
+              "x": 177,
+              "y": 300
+            },
+            "description": "Extracts structured JSON data from a CV document using AI-powered document processing",
+            "display_name": "Process CV Data",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "kvp_schemas": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "title": "DocProcKVPSchema",
+                        "required": [
+                          "document_type",
+                          "document_description",
+                          "fields"
+                        ],
+                        "properties": {
+                          "fields": {
+                            "type": "object",
+                            "title": "Fields",
+                            "description": "The fields to extract from the document. These are the keys in the KVP extraction result.",
+                            "additionalProperties": {
+                              "anyOf": [
+                                {
+                                  "type": "object",
+                                  "title": "DocProcField",
+                                  "required": [
+                                    "description"
+                                  ],
+                                  "properties": {
+                                    "default": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ],
+                                      "title": "Default",
+                                      "default": "",
+                                      "description": "A default value for the field to extract from the document."
+                                    },
+                                    "example": {
+                                      "type": "string",
+                                      "title": "Example",
+                                      "default": "",
+                                      "description": "An example of the field to extract from the document."
+                                    },
+                                    "description": {
+                                      "type": "string",
+                                      "title": "Description",
+                                      "description": "A description of the field to extract from the document."
+                                    },
+                                    "available_options": {
+                                      "anyOf": [
+                                        {
+                                          "type": "array",
+                                          "items": {
+                                            "type": "string"
+                                          }
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ],
+                                      "title": "Available Options",
+                                      "default": null,
+                                      "description": "A list of possible values for the field."
+                                    }
+                                  }
+                                },
+                                {
+                                  "type": "object",
+                                  "title": "DocProcTable",
+                                  "required": [
+                                    "type",
+                                    "description",
+                                    "columns"
+                                  ],
+                                  "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "array",
+                                      "title": "Type"
+                                    },
+                                    "columns": {
+                                      "type": "object",
+                                      "title": "Columns",
+                                      "description": "The columns to extract from the table. These are the keys in the table extraction result.",
+                                      "additionalProperties": {
+                                        "type": "object",
+                                        "title": "DocProcField",
+                                        "required": [
+                                          "description"
+                                        ],
+                                        "properties": {
+                                          "default": {
+                                            "anyOf": [
+                                              {
+                                                "type": "string"
+                                              },
+                                              {
+                                                "type": "null"
+                                              }
+                                            ],
+                                            "title": "Default",
+                                            "default": "",
+                                            "description": "A default value for the field to extract from the document."
+                                          },
+                                          "example": {
+                                            "type": "string",
+                                            "title": "Example",
+                                            "default": "",
+                                            "description": "An example of the field to extract from the document."
+                                          },
+                                          "description": {
+                                            "type": "string",
+                                            "title": "Description",
+                                            "description": "A description of the field to extract from the document."
+                                          },
+                                          "available_options": {
+                                            "anyOf": [
+                                              {
+                                                "type": "array",
+                                                "items": {
+                                                  "type": "string"
+                                                }
+                                              },
+                                              {
+                                                "type": "null"
+                                              }
+                                            ],
+                                            "title": "Available Options",
+                                            "default": null,
+                                            "description": "A list of possible values for the field."
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "description": {
+                                      "type": "string",
+                                      "title": "Description",
+                                      "description": "A description of the table to extract from the document."
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          "document_type": {
+                            "type": "string",
+                            "title": "Document Type",
+                            "description": "A label for the kind of documents we want to extract"
+                          },
+                          "document_description": {
+                            "type": "string",
+                            "title": "Document Description",
+                            "description": "A description of the kind of documents we want to extractI. This is used to select which schema to use for extraction."
+                          },
+                          "additional_prompt_instructions": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "title": "Additional Prompt Instructions",
+                            "description": "Additional instructions to guide the extraction. This is used to provide more context to the model about the document."
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "KVP schemas",
+                  "description": "Optional list of key-value pair schemas to use for extraction."
+                },
+                "document_ref": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "binary"
+                    },
+                    {
+                      "type": "string",
+                      "title": "File reference",
+                      "format": "wxo-file",
+                      "description": "A URL identifying the File to be used."
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Document reference",
+                  "format": "binary",
+                  "description": "Either an ID or a URL identifying the document to be used."
+                },
+                "kvp_model_name": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "KVP Model Name",
+                  "description": "The LLM model to be used for key-value pair extraction"
+                },
+                "kvp_enable_text_hints": {
+                  "anyOf": [
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "KVP Enable Text Hints",
+                  "default": true,
+                  "description": "Determines whether to use text hints such as the text and layout information extracted from the document when extracting values in addition to the page image (True), or just rely on the page image itself (False)"
+                },
+                "kvp_force_schema_name": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "KVP Force Schema Name",
+                  "description": "Forces the kvp extractor to use a specified schema directly for value extraction by setting the schema document_type."
+                }
+              }
+            },
+            "output_schema": {
+              "type": "object",
+              "required": [
+                "cv_data_json"
+              ],
+              "properties": {
+                "cv_data_json": {
+                  "type": "string",
+                  "title": "Cv Data Json",
+                  "description": "Complete CV data as JSON string"
+                }
+              }
+            },
+            "error_handler_config": {
+              "max_retries": 0,
+              "error_message": "Something went wrong while running 'Process CV Data'",
+              "retry_interval": 1000
+            }
+          },
+          "input_map": {
+            "spec": {
+              "maps": [],
+              "name": "",
+              "fallback_strategy": "ask_the_user"
+            }
+          }
+        },
+        "user_29cc54": {
+          "spec": {
+            "kind": "user",
+            "name": "user_29cc54",
+            "fields": [
+              {
+                "kind": "file",
+                "name": "upload_fba327",
+                "direction": "input",
+                "output_schema": {
+                  "type": "object",
+                  "required": [
+                    "value"
+                  ],
+                  "properties": {
+                    "value": {
+                      "type": "string",
+                      "format": "wxo-file"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            ],
+            "owners": [],
+            "position": {
+              "x": 177,
+              "y": 203
+            },
+            "display_name": "CV"
+          }
+        },
+        "user_3a7587": {
+          "spec": {
+            "kind": "user",
+            "name": "user_3a7587",
+            "fields": [
+              {
+                "kind": "text",
+                "name": "text_output_1b93da",
+                "text": "This flow converts a CV to the Integration Designers Template. Upload a CV to continue.",
+                "direction": "output",
+                "input_schema": {
+                  "type": "object",
+                  "required": [
+                    "value"
+                  ],
+                  "properties": {
+                    "value": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            ],
+            "owners": [],
+            "position": {
+              "x": 177,
+              "y": 108
+            },
+            "display_name": "Entry Message"
+          }
+        },
+        "user_8c80fd": {
+          "spec": {
+            "kind": "user",
+            "name": "user_8c80fd",
+            "fields": [
+              {
+                "kind": "text",
+                "name": "text_output_980bd8",
+                "text": "{flow[\"CV Converter\"][\"Generate CV summary\"].output.value}",
+                "direction": "output",
+                "input_schema": {
+                  "type": "object",
+                  "required": [
+                    "value"
+                  ],
+                  "properties": {
+                    "value": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            ],
+            "owners": [],
+            "position": {
+              "x": 177.96067243458,
+              "y": 688
+            },
+            "display_name": "Display summary"
+          }
+        },
+        "user_94059e": {
+          "spec": {
+            "kind": "user",
+            "name": "user_94059e",
+            "fields": [
+              {
+                "kind": "file",
+                "name": "download_586fe9",
+                "direction": "output",
+                "input_map": {
+                  "spec": {
+                    "maps": [
+                      {
+                        "metadata": {
+                          "assignmentType": "variable"
+                        },
+                        "has_no_value": false,
+                        "target_variable": "self.input.value",
+                        "value_expression": "flow[\"CV Converter\"].populate_word_template.output"
+                      }
+                    ],
+                    "name": ""
+                  }
+                },
+                "input_schema": {
+                  "type": "object",
+                  "required": [
+                    "value"
+                  ],
+                  "properties": {
+                    "value": {
+                      "type": "string",
+                      "format": "wxo-file"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            ],
+            "owners": [],
+            "position": {
+              "x": 56.291268961687365,
+              "y": 1464.9370005878618
+            },
+            "display_name": "File download 1"
+          }
+        },
+        "user_9fbec9": {
+          "spec": {
+            "kind": "user",
+            "name": "user_9fbec9",
+            "fields": [
+              {
+                "kind": "boolean",
+                "name": "boolean_5d8953",
+                "direction": "input",
+                "output_schema": {
+                  "type": "object",
+                  "required": [
+                    "value"
+                  ],
+                  "properties": {
+                    "value": {
+                      "type": "boolean"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            ],
+            "owners": [],
+            "position": {
+              "x": 175.90673008130562,
+              "y": 776.6914870922635
+            },
+            "display_name": "Continue with conversion?"
+          }
+        },
+        "user_e1b4da": {
+          "spec": {
+            "kind": "user",
+            "name": "user_e1b4da",
+            "fields": [
+              {
+                "kind": "text",
+                "name": "text_output_8e32c9",
+                "text": "CV conversion flow has been stopped.",
+                "direction": "output",
+                "input_schema": {
+                  "type": "object",
+                  "required": [
+                    "value"
+                  ],
+                  "properties": {
+                    "value": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            ],
+            "owners": [],
+            "position": {
+              "x": 330.58934214400034,
+              "y": 1187.269747994342
+            },
+            "display_name": "Processing cancelled"
+          }
+        },
+        "user_fa828f": {
+          "spec": {
+            "kind": "user",
+            "name": "user_fa828f",
+            "fields": [
+              {
+                "kind": "file",
+                "name": "upload_2a63dc",
+                "direction": "input",
+                "output_schema": {
+                  "type": "object",
+                  "required": [
+                    "value"
+                  ],
+                  "properties": {
+                    "value": {
+                      "type": "string",
+                      "format": "wxo-file"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            ],
+            "owners": [],
+            "position": {
+              "x": 60.29126896168738,
+              "y": 1082.9370005878618
+            },
+            "display_name": "Template"
+          }
+        },
+        "branch_86ce65": {
+          "spec": {
+            "kind": "branch",
+            "name": "branch_86ce65",
+            "position": {
+              "x": 329.08094333264796,
+              "y": 947.933007753933
+            },
+            "evaluator": {
+              "conditions": [
+                {
+                  "default": false,
+                  "edge_id": "603ccd31-426f-4858-913b-7b204beb71ce",
+                  "metadata": {
+                    "id": "5b135376-115a-48ed-b145-9d1ff6dd5db0",
+                    "conditions": [
+                      {
+                        "value": "True",
+                        "isValid": true,
+                        "dataType": "boolean",
+                        "operator": "is",
+                        "variableName": "flow[\"CV Converter\"][\"Continue with conversion?\"].output.value"
+                      }
+                    ]
+                  },
+                  "expression": "flow[\"CV Converter\"][\"Continue with conversion?\"].output.value is True"
+                },
+                {
+                  "default": true,
+                  "edge_id": "d5ad2c43-b9bb-4eb0-ac2e-1e3072186562",
+                  "metadata": {
+                    "id": "bd95487e-91ea-4808-96fc-fbb2302dc0e9"
+                  }
+                }
+              ]
+            },
+            "display_name": "Perform conversion",
+            "match_policy": "FIRST_MATCH"
+          }
+        },
+        "prompt_283e88": {
+          "spec": {
+            "llm": "groq/openai/gpt-oss-120b",
+            "kind": "prompt",
+            "name": "prompt_283e88",
+            "metadata": {
+              "creativity_slider_position": "5",
+              "creativity_slider_manual_override": false
+            },
+            "position": {
+              "x": 60.291268961687365,
+              "y": 1228.9370005878618
+            },
+            "test_data": [
+              {
+                "value": "",
+                "source": "self.input.profile"
+              },
+              {
+                "value": "",
+                "source": "self.input.json_string"
+              },
+              {
+                "value": "",
+                "source": "flow.input.start_date"
+              }
+            ],
+            "description": "",
+            "user_prompt": "The following JSON describes an indiviual. Extract the year of birth from the date of birth field and add it as a field titled year_of_birth. Append the profile into a field titled profile. If start_date is known, append it. Return the modified JSON.\n\nstart_date: {flow.input.start_date}\n\nProfile: {self.input.profile}\n\nJSON: {self.input.json_string}",
+            "display_name": "JSON Modifier",
+            "input_schema": {
+              "type": "object",
+              "required": [
+                "profile",
+                "json_string"
+              ],
+              "properties": {
+                "profile": {
+                  "type": "string",
+                  "description": ""
+                },
+                "json_string": {
+                  "type": "string",
+                  "description": ""
+                }
+              }
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              }
+            },
+            "system_prompt": "You are a helpfull agent that modifies JSON objects.",
+            "llm_parameters": {
+              "top_k": 30,
+              "top_p": 0.7,
+              "temperature": 0.4,
+              "max_new_tokens": 200,
+              "min_new_tokens": 50,
+              "stop_sequences": [
+                "Human",
+                "AI"
+              ]
+            },
+            "prompt_examples": [],
+            "error_handler_config": {
+              "max_retries": 0,
+              "error_message": "Something went wrong while running 'JSON Modifier'",
+              "retry_interval": 1000
+            },
+            "include_agent_context": false
+          },
+          "input_map": {
+            "spec": {
+              "maps": [],
+              "name": "",
+              "fallback_strategy": "ask_the_user"
+            }
+          }
+        },
+        "prompt_30437d": {
+          "spec": {
+            "llm": "groq/openai/gpt-oss-120b",
+            "kind": "prompt",
+            "name": "prompt_30437d",
+            "metadata": {
+              "creativity_slider_position": "1",
+              "creativity_slider_manual_override": false
+            },
+            "position": {
+              "x": 176.32250805016554,
+              "y": 396
+            },
+            "test_data": [
+              {
+                "value": "",
+                "source": "self.input.cv_json"
+              }
+            ],
+            "description": "",
+            "user_prompt": "Summarize this cv. Also generate an overall profile consisting of 3-5 sentences.\n\n{self.input.cv_json}",
+            "display_name": "Generate CV summary",
+            "input_schema": {
+              "type": "object",
+              "required": [
+                "cv_json"
+              ],
+              "properties": {
+                "cv_json": {
+                  "type": "string",
+                  "description": ""
+                }
+              }
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string",
+                  "description": "The output result as a string."
+                }
+              }
+            },
+            "system_prompt": "You are a helpful assistant that summarizes json objects detailing a cv.",
+            "llm_parameters": {
+              "top_k": 10,
+              "top_p": 0.9,
+              "temperature": 0.15,
+              "max_new_tokens": 200,
+              "min_new_tokens": 50,
+              "stop_sequences": [
+                "Human",
+                "AI"
+              ]
+            },
+            "prompt_examples": [],
+            "error_handler_config": {
+              "max_retries": 0,
+              "error_message": "Something went wrong while running 'Generate CV summary'",
+              "retry_interval": 1000
+            },
+            "include_agent_context": false
+          },
+          "input_map": {
+            "spec": {
+              "maps": [
+                {
+                  "metadata": {
+                    "assignmentType": "variable"
+                  },
+                  "has_no_value": false,
+                  "target_variable": "self.input.cv_json",
+                  "value_expression": "flow[\"CV Converter\"][\"Process CV Data\"].output.cv_data_json"
+                }
+              ],
+              "name": "",
+              "fallback_strategy": "ask_the_user"
+            }
+          }
+        },
+        "prompt_5892b0": {
+          "spec": {
+            "llm": "groq/openai/gpt-oss-120b",
+            "kind": "prompt",
+            "name": "prompt_5892b0",
+            "metadata": {
+              "creativity_slider_position": "5",
+              "creativity_slider_manual_override": false
+            },
+            "position": {
+              "x": 178.32250805016554,
+              "y": 478
+            },
+            "test_data": [
+              {
+                "value": "",
+                "source": "self.input.summary"
+              },
+              {
+                "value": "",
+                "source": "flow[\"CV Converter\"][\"Generate CV summary\"].output.value"
+              }
+            ],
+            "description": "",
+            "user_prompt": "Extract the text detailing the overall profile from the following summary.\n\n{self.input.summary}",
+            "display_name": "Extract overall profile",
+            "input_schema": {
+              "type": "object",
+              "required": [
+                "summary"
+              ],
+              "properties": {
+                "summary": {
+                  "type": "string",
+                  "description": ""
+                }
+              }
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              }
+            },
+            "system_prompt": "You are a helpful assistant that extracts parts from summaries.",
+            "llm_parameters": {
+              "top_k": 30,
+              "top_p": 0.7,
+              "temperature": 0.4,
+              "max_new_tokens": 200,
+              "min_new_tokens": 50,
+              "stop_sequences": [
+                "Human",
+                "AI"
+              ]
+            },
+            "prompt_examples": [],
+            "error_handler_config": {
+              "max_retries": 0,
+              "error_message": "Something went wrong while running 'Extract overall profile'",
+              "retry_interval": 1000
+            },
+            "include_agent_context": false
+          },
+          "input_map": {
+            "spec": {
+              "maps": [
+                {
+                  "metadata": {
+                    "assignmentType": "variable"
+                  },
+                  "has_no_value": false,
+                  "target_variable": "self.input.cv_json",
+                  "value_expression": "flow[\"CV Converter\"][\"Process CV Data\"].output.cv_data_json"
+                },
+                {
+                  "metadata": {
+                    "assignmentType": "variable"
+                  },
+                  "has_no_value": false,
+                  "target_variable": "self.input.summary",
+                  "value_expression": "flow[\"CV Converter\"][\"Generate CV summary\"].output.value"
+                }
+              ],
+              "name": "",
+              "fallback_strategy": "ask_the_user"
+            }
+          }
+        },
+        "user_flow_6a2eda__end__": {
+          "spec": {
+            "kind": "end",
+            "name": "user_flow_6a2eda__end__",
+            "position": {
+              "x": 177,
+              "y": 1654.5442365869203
+            }
+          }
+        },
+        "user_flow_6a2eda__start__": {
+          "spec": {
+            "kind": "start",
+            "name": "user_flow_6a2eda__start__",
+            "position": {
+              "x": 177,
+              "y": 0
+            }
+          }
+        }
+      },
+      "schemas": {}
+    }
+  },
+  "schemas": {},
+  "metadata": {
+    "llm_model": "groq/openai/gpt-oss-120b",
+    "source_kind": "ui",
+    "is_system_generated_description": false
+  },
+  "output_map": {
+    "spec": {
+      "maps": [],
+      "name": "",
+      "fallback_strategy": "ask_the_user"
+    }
+  }
+}

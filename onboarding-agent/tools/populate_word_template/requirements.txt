@@ -1,0 +1,2 @@
+docxtpl==0.18.0
+ibm-watsonx-orchestrate==2.10.0

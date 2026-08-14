@@ -1,0 +1,1951 @@
+{
+  "spec": {
+    "kind": "flow",
+    "name": "employee_onboarding",
+    "callbacks": [
+      {
+        "tool": "",
+        "events": [],
+        "batch_interval": 3000
+      }
+    ],
+    "initiators": [],
+    "description": " Helps a user with employee onboarding.",
+    "display_name": "Employee Onboarding",
+    "input_schema": {},
+    "output_schema": {},
+    "private_schema": {
+      "type": "object",
+      "properties": {
+        "genders": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "M",
+            "F",
+            "X"
+          ],
+          "description": ""
+        }
+      }
+    },
+    "translation_support": {
+      "enabled": true,
+      "source_locale": "en",
+      "target_locales": [
+        "nl"
+      ]
+    },
+    "suppress_agent_summarization": true
+  },
+  "edges": [
+    {
+      "id": "bd8cf8eb-bdc4-4110-a25c-aebfff383ad0",
+      "end": "user_flow_6a2eda",
+      "start": "__start__"
+    },
+    {
+      "id": "18fae23a-75b0-4dad-998d-422f207ddb6a",
+      "end": "__end__",
+      "start": "user_flow_6a2eda"
+    }
+  ],
+  "nodes": {
+    "__end__": {
+      "spec": {
+        "kind": "end",
+        "name": "__end__",
+        "position": {
+          "x": 180,
+          "y": 2324
+        }
+      }
+    },
+    "__start__": {
+      "spec": {
+        "kind": "start",
+        "name": "__start__",
+        "position": {
+          "x": 180,
+          "y": 20
+        }
+      }
+    },
+    "user_flow_6a2eda": {
+      "spec": {
+        "kind": "user_flow",
+        "name": "user_flow_6a2eda",
+        "position": {
+          "x": 20,
+          "y": 210
+        },
+        "dimensions": {
+          "width": 566,
+          "height": 2054
+        },
+        "initiators": [],
+        "display_name": "Employee Onboarding",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "assignees": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "wxo-user"
+              }
+            }
+          }
+        },
+        "translations": {
+          "nl": {
+            "display_name": "Aanmelding werknemer"
+          },
+          "metadata": {
+            "builderui:aigenerated": "all"
+          }
+        }
+      },
+      "edges": [
+        {
+          "id": "f83bc055-e91b-4c31-85db-30ac01714946",
+          "end": "user_ae56f8",
+          "start": "user_flow_6a2eda__start__"
+        },
+        {
+          "id": "2837616e-f0ef-4a86-9c2f-3144404a7739",
+          "end": "branch_553ea9",
+          "start": "user_ae56f8"
+        },
+        {
+          "id": "61245a76-d34f-42eb-9af2-9ce37c3457d3",
+          "end": "prompt_2977e4",
+          "start": "tool_69d66d"
+        },
+        {
+          "id": "7293a038-54da-4b87-b45f-a22e2b8ad613",
+          "end": "tool_69d66d",
+          "start": "user_3ec1da"
+        },
+        {
+          "id": "74c0378c-0d76-4e20-8efc-3bc1291579a9",
+          "end": "user_a1274a",
+          "start": "user_8a4f1b"
+        },
+        {
+          "id": "d65c1a39-25ae-490c-a1e5-311879637bb4",
+          "end": "script_3b24ea",
+          "start": "branch_553ea9",
+          "display_name": "No"
+        },
+        {
+          "id": "1eb8f86a-691a-4e35-9e88-099242760e1f",
+          "end": "user_3ec1da",
+          "start": "branch_553ea9",
+          "display_name": "Yes"
+        },
+        {
+          "id": "8afa1d7a-e9bf-4da6-9109-fdad8b3a338e",
+          "end": "tool_fd4b3c",
+          "start": "prompt_65a557"
+        },
+        {
+          "id": "70c8aab0-d7c2-46a0-9a01-b4cf6e09f9a8",
+          "end": "user_90127d",
+          "start": "user_8a4f1b"
+        },
+        {
+          "id": "02d5216a-69fb-42f8-9031-c8a129c56959",
+          "end": "user_flow_6a2eda__end__",
+          "start": "user_90127d"
+        },
+        {
+          "id": "8974e06a-51f0-445e-ade4-800f4bc35f59",
+          "end": "user_flow_6a2eda__end__",
+          "start": "user_8488d1"
+        },
+        {
+          "id": "9ba68fa3-9bdc-4ded-9c1c-3cfdc3217da2",
+          "end": "script_3b24ea",
+          "start": "prompt_2977e4"
+        },
+        {
+          "id": "299e6bdc-3cd4-4533-b657-46e74999949e",
+          "end": "user_8a4f1b",
+          "start": "script_3b24ea"
+        },
+        {
+          "id": "abe9c3a6-cadd-4621-8eef-d8c3e9e1b85b",
+          "end": "user_90127d",
+          "start": "user_a1274a"
+        },
+        {
+          "id": "51cdd5da-190c-4242-9ab7-49359b8ef1ef",
+          "end": "user_b37545",
+          "start": "user_a1274a"
+        },
+        {
+          "id": "c31d9c77-cd3d-4df1-87a8-fe6e2ed9e21a",
+          "end": "tool_a9810f",
+          "start": "user_b37545"
+        },
+        {
+          "id": "0648f7dd-415e-4767-b091-a5e82d410227",
+          "end": "prompt_65a557",
+          "start": "tool_a9810f"
+        },
+        {
+          "id": "05a1f421-d039-4110-b69a-043a7ca3351f",
+          "end": "user_8488d1",
+          "start": "tool_fd4b3c"
+        }
+      ],
+      "nodes": {
+        "tool_69d66d": {
+          "spec": {
+            "kind": "tool",
+            "name": "tool_69d66d",
+            "tool": "process_identity_card",
+            "position": {
+              "x": 235,
+              "y": 524
+            },
+            "description": "Extracts personal information from identity card documents for employee onboarding",
+            "display_name": "Process Identity Card",
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "kvp_schemas": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "title": "DocProcKVPSchema",
+                        "required": [
+                          "document_type",
+                          "document_description",
+                          "fields"
+                        ],
+                        "properties": {
+                          "fields": {
+                            "type": "object",
+                            "title": "Fields",
+                            "description": "The fields to extract from the document. These are the keys in the KVP extraction result.",
+                            "additionalProperties": {
+                              "anyOf": [
+                                {
+                                  "type": "object",
+                                  "title": "DocProcField",
+                                  "required": [
+                                    "description"
+                                  ],
+                                  "properties": {
+                                    "default": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ],
+                                      "title": "Default",
+                                      "default": "",
+                                      "description": "A default value for the field to extract from the document."
+                                    },
+                                    "example": {
+                                      "type": "string",
+                                      "title": "Example",
+                                      "default": "",
+                                      "description": "An example of the field to extract from the document."
+                                    },
+                                    "description": {
+                                      "type": "string",
+                                      "title": "Description",
+                                      "description": "A description of the field to extract from the document."
+                                    },
+                                    "available_options": {
+                                      "anyOf": [
+                                        {
+                                          "type": "array",
+                                          "items": {
+                                            "type": "string"
+                                          }
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ],
+                                      "title": "Available Options",
+                                      "default": null,
+                                      "description": "A list of possible values for the field."
+                                    }
+                                  }
+                                },
+                                {
+                                  "type": "object",
+                                  "title": "DocProcTable",
+                                  "required": [
+                                    "type",
+                                    "description",
+                                    "columns"
+                                  ],
+                                  "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "const": "array",
+                                      "title": "Type"
+                                    },
+                                    "columns": {
+                                      "type": "object",
+                                      "title": "Columns",
+                                      "description": "The columns to extract from the table. These are the keys in the table extraction result.",
+                                      "additionalProperties": {
+                                        "type": "object",
+                                        "title": "DocProcField",
+                                        "required": [
+                                          "description"
+                                        ],
+                                        "properties": {
+                                          "default": {
+                                            "anyOf": [
+                                              {
+                                                "type": "string"
+                                              },
+                                              {
+                                                "type": "null"
+                                              }
+                                            ],
+                                            "title": "Default",
+                                            "default": "",
+                                            "description": "A default value for the field to extract from the document."
+                                          },
+                                          "example": {
+                                            "type": "string",
+                                            "title": "Example",
+                                            "default": "",
+                                            "description": "An example of the field to extract from the document."
+                                          },
+                                          "description": {
+                                            "type": "string",
+                                            "title": "Description",
+                                            "description": "A description of the field to extract from the document."
+                                          },
+                                          "available_options": {
+                                            "anyOf": [
+                                              {
+                                                "type": "array",
+                                                "items": {
+                                                  "type": "string"
+                                                }
+                                              },
+                                              {
+                                                "type": "null"
+                                              }
+                                            ],
+                                            "title": "Available Options",
+                                            "default": null,
+                                            "description": "A list of possible values for the field."
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "description": {
+                                      "type": "string",
+                                      "title": "Description",
+                                      "description": "A description of the table to extract from the document."
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          "document_type": {
+                            "type": "string",
+                            "title": "Document Type",
+                            "description": "A label for the kind of documents we want to extract"
+                          },
+                          "document_description": {
+                            "type": "string",
+                            "title": "Document Description",
+                            "description": "A description of the kind of documents we want to extractI. This is used to select which schema to use for extraction."
+                          },
+                          "additional_prompt_instructions": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ],
+                            "title": "Additional Prompt Instructions",
+                            "description": "Additional instructions to guide the extraction. This is used to provide more context to the model about the document."
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "KVP schemas",
+                  "description": "Optional list of key-value pair schemas to use for extraction."
+                },
+                "document_ref": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "binary"
+                    },
+                    {
+                      "type": "string",
+                      "title": "File reference",
+                      "format": "wxo-file",
+                      "description": "A URL identifying the File to be used."
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Document reference",
+                  "format": "binary",
+                  "description": "Either an ID or a URL identifying the document to be used."
+                },
+                "kvp_model_name": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "KVP Model Name",
+                  "description": "The LLM model to be used for key-value pair extraction"
+                },
+                "kvp_enable_text_hints": {
+                  "anyOf": [
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "KVP Enable Text Hints",
+                  "default": true,
+                  "description": "Determines whether to use text hints such as the text and layout information extracted from the document when extracting values in addition to the page image (True), or just rely on the page image itself (False)"
+                },
+                "kvp_force_schema_name": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "KVP Force Schema Name",
+                  "description": "Forces the kvp extractor to use a specified schema directly for value extraction by setting the schema document_type."
+                }
+              }
+            },
+            "output_schema": {
+              "type": "object",
+              "required": [
+                "sex",
+                "name",
+                "summary",
+                "given_name",
+                "nationality",
+                "date_of_birth",
+                "expiration_date",
+                "national_register_number"
+              ],
+              "properties": {
+                "sex": {
+                  "type": "string",
+                  "title": "Sex",
+                  "description": "Sex or gender"
+                },
+                "name": {
+                  "type": "string",
+                  "title": "Name",
+                  "description": "Surname or family name"
+                },
+                "summary": {
+                  "type": "string",
+                  "title": "Summary",
+                  "description": "Human-readable summary of the extracted information"
+                },
+                "given_name": {
+                  "type": "string",
+                  "title": "Given Name",
+                  "description": "First name or given name"
+                },
+                "nationality": {
+                  "type": "string",
+                  "title": "Nationality",
+                  "description": "Nationality or citizenship"
+                },
+                "date_of_birth": {
+                  "type": "string",
+                  "title": "Date Of Birth",
+                  "description": "Date of birth"
+                },
+                "expiration_date": {
+                  "type": "string",
+                  "title": "Expiration Date",
+                  "description": "Expiration date of the card"
+                },
+                "national_register_number": {
+                  "type": "string",
+                  "title": "National Register Number",
+                  "description": "National register number"
+                }
+              }
+            },
+            "error_handler_config": {
+              "max_retries": 0,
+              "error_message": "Something went wrong while running 'Process Identity Card'",
+              "retry_interval": 1000
+            }
+          },
+          "input_map": {
+            "spec": {
+              "maps": [],
+              "name": "",
+              "fallback_strategy": "ask_the_user"
+            }
+          }
+        },
+        "tool_a9810f": {
+          "spec": {
+            "kind": "tool",
+            "name": "tool_a9810f",
+            "tool": "onboarding-app:create_employee",
+            "position": {
+              "x": 300,
+              "y": 1444
+            },
+            "description": "Creates a new employee record in the onboarding system. The employee is initialized with a unique ID \nand default onboarding status (CV and car status set to false). The system will automatically track \nwhen both CV creation and car provisioning are completed to mark the overall onboarding as complete.\n",
+            "display_name": "Create a new employee",
+            "input_schema": {
+              "type": "object",
+              "required": [
+                "givenName",
+                "name",
+                "startDate",
+                "gender",
+                "salary"
+              ],
+              "properties": {
+                "name": {
+                  "in": "body",
+                  "type": "string",
+                  "example": "Doe",
+                  "description": "Employee's family name (last name)"
+                },
+                "gender": {
+                  "in": "body",
+                  "enum": [
+                    "Male",
+                    "Female",
+                    "Other"
+                  ],
+                  "type": "string",
+                  "example": "Male",
+                  "description": "Employee's gender"
+                },
+                "salary": {
+                  "in": "body",
+                  "type": "number",
+                  "format": "decimal",
+                  "example": 75000,
+                  "minimum": 0.01,
+                  "description": "Employee's annual salary"
+                },
+                "givenName": {
+                  "in": "body",
+                  "type": "string",
+                  "example": "John",
+                  "description": "Employee's given name (first name)"
+                },
+                "startDate": {
+                  "in": "body",
+                  "type": "string",
+                  "format": "date",
+                  "example": "2026-07-01",
+                  "description": "Employee's start date"
+                }
+              }
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "123e4567-e89b-12d3-a456-426614174000",
+                  "description": "Unique identifier for the employee"
+                },
+                "name": {
+                  "type": "string",
+                  "example": "Doe",
+                  "description": "Employee's family name (last name)"
+                },
+                "gender": {
+                  "enum": [
+                    "Male",
+                    "Female",
+                    "Other"
+                  ],
+                  "type": "string",
+                  "example": "Male",
+                  "description": "Employee's gender"
+                },
+                "salary": {
+                  "type": "number",
+                  "format": "decimal",
+                  "example": 75000,
+                  "minimum": 0.01,
+                  "description": "Employee's annual salary"
+                },
+                "cvStatus": {
+                  "type": "boolean",
+                  "example": false,
+                  "description": "CV creation status"
+                },
+                "carStatus": {
+                  "type": "boolean",
+                  "example": false,
+                  "description": "Car provisioning status"
+                },
+                "givenName": {
+                  "type": "string",
+                  "example": "John",
+                  "description": "Employee's given name (first name)"
+                },
+                "startDate": {
+                  "type": "string",
+                  "format": "date",
+                  "example": "2026-07-01",
+                  "description": "Employee's start date"
+                },
+                "assignedCarId": {
+                  "type": "string",
+                  "example": "car-123",
+                  "nullable": true,
+                  "description": "ID of the car assigned to this employee"
+                },
+                "onboardingStatus": {
+                  "enum": [
+                    "Completed",
+                    "In Progress",
+                    "Error"
+                  ],
+                  "type": "string",
+                  "example": "In Progress",
+                  "description": "Current onboarding status with validation - 'Completed' (all done), 'In Progress' (pending), or 'Error' (car marked provisioned without assignment)"
+                }
+              }
+            },
+            "error_handler_config": {
+              "max_retries": 0,
+              "error_message": "Something went wrong while running 'Create a new employee'",
+              "retry_interval": 1000
+            }
+          },
+          "input_map": {
+            "spec": {
+              "maps": [
+                {
+                  "metadata": {
+                    "assignmentType": "variable"
+                  },
+                  "has_no_value": false,
+                  "target_variable": "self.input.gender",
+                  "value_expression": "flow[\"Employee Onboarding\"][\"Fill in and verify provided information\"].output.Gender"
+                },
+                {
+                  "metadata": {
+                    "assignmentType": "variable"
+                  },
+                  "has_no_value": false,
+                  "target_variable": "self.input.givenName",
+                  "value_expression": "flow[\"Employee Onboarding\"][\"Fill in and verify provided information\"].output[\"Given Name (First Name)\"]"
+                },
+                {
+                  "metadata": {
+                    "assignmentType": "variable"
+                  },
+                  "has_no_value": false,
+                  "target_variable": "self.input.name",
+                  "value_expression": "flow[\"Employee Onboarding\"][\"Fill in and verify provided information\"].output[\"Name (Surname)\"]"
+                },
+                {
+                  "metadata": {
+                    "assignmentType": "variable"
+                  },
+                  "has_no_value": false,
+                  "target_variable": "self.input.salary",
+                  "value_expression": "flow[\"Employee Onboarding\"][\"Enter additional information\"].output[\"Annual salary\"]"
+                },
+                {
+                  "metadata": {
+                    "assignmentType": "variable"
+                  },
+                  "has_no_value": false,
+                  "target_variable": "self.input.startDate",
+                  "value_expression": "flow[\"Employee Onboarding\"][\"Enter additional information\"].output[\"Employee start date\"]"
+                }
+              ],
+              "name": "",
+              "fallback_strategy": "ask_the_user"
+            }
+          }
+        },
+        "tool_fd4b3c": {
+          "spec": {
+            "kind": "tool",
+            "name": "tool_fd4b3c",
+            "tool": "Agentic_workflow_9_8339hZ:7bd5fa82-34d6-4493-b2b8-eb2e4cdee7ea",
+            "position": {
+              "x": 300,
+              "y": 1724
+            },
+            "description": "Sends a message to Slack onboarding channel.",
+            "display_name": "Send message to Slack onboarding channel",
+            "input_schema": {
+              "type": "object",
+              "required": [
+                "message"
+              ],
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {}
+            },
+            "error_handler_config": {
+              "max_retries": 0,
+              "error_message": "Something went wrong while running 'Send message to Slack onboarding channel'",
+              "retry_interval": 1000
+            }
+          },
+          "input_map": {
+            "spec": {
+              "maps": [
+                {
+                  "metadata": {
+                    "assignmentType": "variable"
+                  },
+                  "has_no_value": false,
+                  "target_variable": "self.input.message",
+                  "value_expression": "flow[\"Employee Onboarding\"][\"Onboarding summarizer\"].output.value"
+                }
+              ],
+              "name": "",
+              "fallback_strategy": "ask_the_user"
+            }
+          }
+        },
+        "user_3ec1da": {
+          "spec": {
+            "kind": "user",
+            "name": "user_3ec1da",
+            "fields": [
+              {
+                "kind": "file",
+                "name": "upload_65fd98",
+                "direction": "input",
+                "output_schema": {
+                  "type": "object",
+                  "required": [
+                    "value"
+                  ],
+                  "properties": {
+                    "value": {
+                      "type": "string",
+                      "format": "wxo-file"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            ],
+            "owners": [],
+            "position": {
+              "x": 235,
+              "y": 384
+            },
+            "display_name": "Identity card",
+            "translations": {
+              "nl": {
+                "display_name": "Identiteitskaart"
+              },
+              "metadata": {
+                "builderui:aigenerated": "all"
+              }
+            }
+          }
+        },
+        "user_8488d1": {
+          "spec": {
+            "kind": "user",
+            "name": "user_8488d1",
+            "fields": [
+              {
+                "kind": "text",
+                "name": "text_output_3a7dcb",
+                "text": "Employee has been enrolled.\n\n{flow[\"Employee Onboarding\"][\"Onboarding summarizer\"].output.value}",
+                "direction": "output",
+                "input_schema": {
+                  "type": "object",
+                  "required": [
+                    "value"
+                  ],
+                  "properties": {
+                    "value": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            ],
+            "owners": [],
+            "position": {
+              "x": 300,
+              "y": 1864
+            },
+            "display_name": "Enrollment summary",
+            "translations": {
+              "nl": {
+                "text": "De werknemer is ingeschreven.\n\n{flow[\"Employee Onboarding\"][\"Onboarding summarizer\"].output.value}"
+              },
+              "metadata": {
+                "builderui:aigenerated": "all"
+              }
+            }
+          }
+        },
+        "user_8a4f1b": {
+          "spec": {
+            "form": {
+              "name": "form_80998e",
+              "fields": [
+                {
+                  "kind": "text",
+                  "name": "field_1",
+                  "uiSchema": {
+                    "ui:title": "Name (Surname)",
+                    "ui:widget": "TextWidget"
+                  },
+                  "direction": "input",
+                  "input_map": {
+                    "spec": {
+                      "maps": [
+                        {
+                          "metadata": {
+                            "assignmentType": "variable"
+                          },
+                          "has_no_value": false,
+                          "target_variable": "self.input.default",
+                          "value_expression": "flow[\"Employee Onboarding\"][\"Process Identity Card\"].output.name"
+                        }
+                      ],
+                      "name": ""
+                    }
+                  },
+                  "display_name": "Name (Surname)",
+                  "input_schema": {
+                    "type": "object",
+                    "required": [],
+                    "properties": {
+                      "default": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "output_schema": {
+                    "type": "object",
+                    "required": [
+                      "value"
+                    ],
+                    "properties": {
+                      "value": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "uiSchemaParkingLot": {}
+                },
+                {
+                  "kind": "text",
+                  "name": "field_2",
+                  "uiSchema": {
+                    "ui:title": "Given Name (First Name)",
+                    "ui:widget": "TextWidget"
+                  },
+                  "direction": "input",
+                  "input_map": {
+                    "spec": {
+                      "maps": [
+                        {
+                          "metadata": {
+                            "assignmentType": "variable"
+                          },
+                          "has_no_value": false,
+                          "target_variable": "self.input.default",
+                          "value_expression": "flow[\"Employee Onboarding\"][\"Process Identity Card\"].output.given_name"
+                        }
+                      ],
+                      "name": ""
+                    }
+                  },
+                  "display_name": "Given Name (First Name)",
+                  "input_schema": {
+                    "type": "object",
+                    "required": [],
+                    "properties": {
+                      "default": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "output_schema": {
+                    "type": "object",
+                    "required": [
+                      "value"
+                    ],
+                    "properties": {
+                      "value": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "uiSchemaParkingLot": {}
+                },
+                {
+                  "kind": "any",
+                  "name": "field_3",
+                  "uiSchema": {
+                    "ui:title": "Gender",
+                    "ui:widget": "ComboboxWidget",
+                    "ui:placeholder": "Select an option"
+                  },
+                  "direction": "input",
+                  "input_map": {
+                    "spec": {
+                      "maps": [
+                        {
+                          "metadata": {
+                            "assignmentType": "variable"
+                          },
+                          "has_no_value": false,
+                          "target_variable": "self.input.choices",
+                          "value_expression": "flow.private.genders"
+                        },
+                        {
+                          "metadata": {
+                            "assignmentType": "variable"
+                          },
+                          "has_no_value": true,
+                          "target_variable": "self.input.display_text",
+                          "value_expression": ""
+                        },
+                        {
+                          "metadata": {
+                            "assignmentType": "variable"
+                          },
+                          "has_no_value": true,
+                          "target_variable": "self.input.display_items",
+                          "value_expression": ""
+                        },
+                        {
+                          "metadata": {
+                            "assignmentType": "automap"
+                          },
+                          "has_no_value": false,
+                          "target_variable": "self.input.default"
+                        }
+                      ],
+                      "name": ""
+                    }
+                  },
+                  "display_name": "Gender",
+                  "input_schema": {
+                    "type": "object",
+                    "required": [
+                      "choices"
+                    ],
+                    "properties": {
+                      "choices": {
+                        "type": "array",
+                        "items": {}
+                      },
+                      "default": {},
+                      "display_text": {
+                        "type": "string"
+                      },
+                      "display_items": {
+                        "type": "array",
+                        "items": {}
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "output_schema": {
+                    "type": "object",
+                    "required": [
+                      "value"
+                    ],
+                    "properties": {
+                      "value": {
+                        "type": "object",
+                        "properties": {}
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "uiSchemaParkingLot": {}
+                },
+                {
+                  "kind": "date",
+                  "name": "field_4",
+                  "uiSchema": {
+                    "format": "YYYY-MM-DD",
+                    "ui:title": "Date of Birth",
+                    "ui:widget": "DateWidget"
+                  },
+                  "direction": "input",
+                  "input_map": {
+                    "spec": {
+                      "maps": [
+                        {
+                          "metadata": {
+                            "assignmentType": "variable"
+                          },
+                          "has_no_value": false,
+                          "target_variable": "self.input.min_date",
+                          "value_expression": "flow[\"Employee Onboarding\"][\"Date limits\"].output.min_date_of_birth"
+                        },
+                        {
+                          "metadata": {
+                            "assignmentType": "variable"
+                          },
+                          "has_no_value": false,
+                          "target_variable": "self.input.max_date",
+                          "value_expression": "flow[\"Employee Onboarding\"][\"Date limits\"].output.max_date_of_birth"
+                        },
+                        {
+                          "metadata": {
+                            "assignmentType": "variable"
+                          },
+                          "has_no_value": false,
+                          "target_variable": "self.input.default",
+                          "value_expression": "flow[\"Employee Onboarding\"][\"Date representation normalizer\"].output.object.date_of_birth"
+                        }
+                      ],
+                      "name": ""
+                    }
+                  },
+                  "display_name": "Date of Birth",
+                  "input_schema": {
+                    "type": "object",
+                    "required": [],
+                    "properties": {
+                      "default": {
+                        "type": "string",
+                        "format": "date"
+                      },
+                      "max_date": {
+                        "type": "string",
+                        "format": "date"
+                      },
+                      "min_date": {
+                        "type": "string",
+                        "format": "date"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "output_schema": {
+                    "type": "object",
+                    "required": [
+                      "value"
+                    ],
+                    "properties": {
+                      "value": {
+                        "type": "string",
+                        "format": "date"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "__previousMultiple": false,
+                  "uiSchemaParkingLot": {}
+                },
+                {
+                  "kind": "text",
+                  "name": "field_5",
+                  "regex": "^[A-Za-z\u00c0-\u00ff\\s\\-']+$",
+                  "uiSchema": {
+                    "ui:title": "Nationality",
+                    "ui:widget": "TextWidget"
+                  },
+                  "direction": "input",
+                  "input_map": {
+                    "spec": {
+                      "maps": [
+                        {
+                          "metadata": {
+                            "assignmentType": "variable"
+                          },
+                          "has_no_value": false,
+                          "target_variable": "self.input.default",
+                          "value_expression": "flow[\"Employee Onboarding\"][\"Process Identity Card\"].output.nationality"
+                        }
+                      ],
+                      "name": ""
+                    }
+                  },
+                  "display_name": "Nationality",
+                  "input_schema": {
+                    "type": "object",
+                    "required": [],
+                    "properties": {
+                      "default": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "output_schema": {
+                    "type": "object",
+                    "required": [
+                      "value"
+                    ],
+                    "properties": {
+                      "value": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "regex_error_msg": "Only letters, spaces, hyphens, and apostrophes are allowed",
+                  "uiSchemaParkingLot": {}
+                },
+                {
+                  "kind": "text",
+                  "name": "field_6",
+                  "regex": "^\\d\\d\\.(0[1-9]|1[0-2])\\.(0[1-9]|[12]\\d|3[01])-\\d\\d\\d\\.\\d\\d$",
+                  "uiSchema": {
+                    "ui:title": "National Register No.",
+                    "ui:widget": "TextWidget"
+                  },
+                  "direction": "input",
+                  "input_map": {
+                    "spec": {
+                      "maps": [
+                        {
+                          "metadata": {
+                            "assignmentType": "variable"
+                          },
+                          "has_no_value": false,
+                          "target_variable": "self.input.default",
+                          "value_expression": "flow[\"Employee Onboarding\"][\"Process Identity Card\"].output.national_register_number"
+                        }
+                      ],
+                      "name": ""
+                    }
+                  },
+                  "display_name": "National Register No.",
+                  "input_schema": {
+                    "type": "object",
+                    "required": [],
+                    "properties": {
+                      "default": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "output_schema": {
+                    "type": "object",
+                    "required": [
+                      "value"
+                    ],
+                    "properties": {
+                      "value": {
+                        "type": "string",
+                        "x-ibm-is-sensitive": true,
+                        "x-ibm-masking-policy": "mask-all"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "regex_error_msg": "Please enter a valid string of the following format: 01.01.01-000.00",
+                  "uiSchemaParkingLot": {}
+                }
+              ],
+              "buttons": [
+                {
+                  "kind": "submit",
+                  "name": "submit",
+                  "edge_id": "74c0378c-0d76-4e20-8efc-3bc1291579a9",
+                  "visible": true,
+                  "display_name": "Submit"
+                },
+                {
+                  "kind": "cancel",
+                  "name": "cancel",
+                  "edge_id": "70c8aab0-d7c2-46a0-9a01-b4cf6e09f9a8",
+                  "visible": true,
+                  "display_name": "Cancel"
+                }
+              ],
+              "jsonSchema": {
+                "type": "object",
+                "required": [
+                  "field_3",
+                  "field_2",
+                  "field_1",
+                  "field_5",
+                  "field_6",
+                  "field_4"
+                ],
+                "properties": {
+                  "field_1": {
+                    "type": "string",
+                    "title": "Name (Surname) (Required)"
+                  },
+                  "field_2": {
+                    "type": "string",
+                    "title": "Given Name (First Name) (Required)"
+                  },
+                  "field_3": {
+                    "title": "Gender (Required)"
+                  },
+                  "field_4": {
+                    "type": "string",
+                    "title": "Date of Birth (Required)",
+                    "format": "date"
+                  },
+                  "field_5": {
+                    "type": "string",
+                    "title": "Nationality (Required)"
+                  },
+                  "field_6": {
+                    "type": "string",
+                    "title": "National Register No. (Required)"
+                  }
+                },
+                "description": "Fill in the new employee information",
+                "additionalProperties": false
+              },
+              "display_name": "Form 1"
+            },
+            "kind": "user",
+            "name": "user_8a4f1b",
+            "fields": [],
+            "owners": [],
+            "position": {
+              "x": 160,
+              "y": 944
+            },
+            "display_name": "Fill in and verify provided information",
+            "translations": {
+              "nl": {
+                "form": {
+                  "fields": {
+                    "field_1": {
+                      "uiSchema": {
+                        "ui:title": "Naam (Achternaam)"
+                      }
+                    },
+                    "field_2": {
+                      "uiSchema": {
+                        "ui:title": "Voornaam (Eerste Naam)"
+                      }
+                    },
+                    "field_3": {
+                      "uiSchema": {
+                        "ui:title": "Geslacht",
+                        "ui:placeholder": "Kies een optie"
+                      }
+                    },
+                    "field_4": {
+                      "uiSchema": {
+                        "ui:title": "Datum van geboorte"
+                      }
+                    },
+                    "field_5": {
+                      "uiSchema": {
+                        "ui:title": "Nationaliteit"
+                      }
+                    },
+                    "field_6": {
+                      "uiSchema": {
+                        "ui:title": "National Register Number"
+                      }
+                    }
+                  },
+                  "buttons": {
+                    "cancel": {
+                      "display_name": "Annuleren"
+                    },
+                    "submit": {
+                      "display_name": "Verzenden"
+                    }
+                  },
+                  "jsonSchema": {
+                    "properties": {
+                      "field_1": {
+                        "title": "Naam (Achternaam)"
+                      },
+                      "field_2": {
+                        "title": "Voornaam (Eerste Naam)"
+                      },
+                      "field_3": {
+                        "title": "Geslacht"
+                      },
+                      "field_4": {
+                        "title": "Datum van geboorte"
+                      },
+                      "field_5": {
+                        "title": "Nationaliteit"
+                      },
+                      "field_6": {
+                        "title": "National Register Number"
+                      }
+                    },
+                    "description": "Vul de nieuwe werknemerinformatie in"
+                  }
+                },
+                "display_name": "Vul de geleverde informatie in en verifieer deze"
+              },
+              "metadata": {
+                "builderui:aigenerated": "all"
+              }
+            }
+          }
+        },
+        "user_90127d": {
+          "spec": {
+            "kind": "user",
+            "name": "user_90127d",
+            "fields": [
+              {
+                "kind": "text",
+                "name": "text_output_310fc9",
+                "text": "The employee Onboarding flow has been cancelled.",
+                "direction": "output",
+                "input_schema": {
+                  "type": "object",
+                  "required": [
+                    "value"
+                  ],
+                  "properties": {
+                    "value": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            ],
+            "owners": [],
+            "position": {
+              "x": 20,
+              "y": 1304
+            },
+            "display_name": "Flow cancelled message",
+            "translations": {
+              "nl": {
+                "text": "De werknemerregistratieflow is geannuleerd."
+              },
+              "metadata": {
+                "builderui:aigenerated": "all"
+              }
+            }
+          }
+        },
+        "user_a1274a": {
+          "spec": {
+            "form": {
+              "name": "form_a915fb",
+              "fields": [
+                {
+                  "kind": "date",
+                  "name": "field_1",
+                  "uiSchema": {
+                    "format": "YYYY-MM-DD",
+                    "ui:title": "Employee start date",
+                    "ui:widget": "DateWidget"
+                  },
+                  "direction": "input",
+                  "input_map": {
+                    "spec": {
+                      "maps": [
+                        {
+                          "metadata": {
+                            "assignmentType": "variable"
+                          },
+                          "has_no_value": false,
+                          "target_variable": "self.input.default",
+                          "value_expression": "flow[\"Employee Onboarding\"][\"Date limits\"].output.start_date"
+                        }
+                      ],
+                      "name": ""
+                    }
+                  },
+                  "display_name": "Employee start date",
+                  "input_schema": {
+                    "type": "object",
+                    "required": [],
+                    "properties": {
+                      "default": {
+                        "type": "string",
+                        "format": "date"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "output_schema": {
+                    "type": "object",
+                    "required": [
+                      "value"
+                    ],
+                    "properties": {
+                      "value": {
+                        "type": "string",
+                        "format": "date"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "__previousMultiple": false,
+                  "uiSchemaParkingLot": {}
+                },
+                {
+                  "kind": "number",
+                  "name": "field_2",
+                  "uiSchema": {
+                    "ui:title": "Annual salary",
+                    "ui:widget": "NumberWidget"
+                  },
+                  "direction": "input",
+                  "input_map": {
+                    "spec": {
+                      "maps": [
+                        {
+                          "metadata": {
+                            "assignmentType": "literal"
+                          },
+                          "has_no_value": false,
+                          "target_variable": "self.input.minimum",
+                          "value_expression": "24000"
+                        },
+                        {
+                          "metadata": {
+                            "assignmentType": "literal"
+                          },
+                          "has_no_value": false,
+                          "target_variable": "self.input.maximum",
+                          "value_expression": "240000"
+                        }
+                      ],
+                      "name": ""
+                    }
+                  },
+                  "display_name": "Annual salary",
+                  "input_schema": {
+                    "type": "object",
+                    "required": [],
+                    "properties": {
+                      "maximum": {
+                        "type": "number"
+                      },
+                      "minimum": {
+                        "type": "number"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "output_schema": {
+                    "type": "object",
+                    "required": [
+                      "value"
+                    ],
+                    "properties": {
+                      "value": {
+                        "type": "integer"
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "uiSchemaParkingLot": {}
+                }
+              ],
+              "buttons": [
+                {
+                  "kind": "submit",
+                  "name": "submit",
+                  "edge_id": "51cdd5da-190c-4242-9ab7-49359b8ef1ef",
+                  "visible": true,
+                  "display_name": "Submit"
+                },
+                {
+                  "kind": "cancel",
+                  "name": "cancel",
+                  "edge_id": "abe9c3a6-cadd-4621-8eef-d8c3e9e1b85b",
+                  "visible": true,
+                  "display_name": "Cancel"
+                }
+              ],
+              "jsonSchema": {
+                "type": "object",
+                "required": [
+                  "field_1",
+                  "field_2"
+                ],
+                "properties": {
+                  "field_1": {
+                    "type": "string",
+                    "title": "Employee start date (Required)",
+                    "format": "date"
+                  },
+                  "field_2": {
+                    "type": "number",
+                    "title": "Annual salary (Required)"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "display_name": "Form 1"
+            },
+            "kind": "user",
+            "name": "user_a1274a",
+            "fields": [],
+            "owners": [],
+            "position": {
+              "x": 290,
+              "y": 1124
+            },
+            "display_name": "Enter additional information",
+            "translations": {
+              "nl": {
+                "form": {
+                  "fields": {
+                    "field_1": {
+                      "uiSchema": {
+                        "ui:title": "Startdatum van de werknemer"
+                      }
+                    },
+                    "field_2": {
+                      "uiSchema": {
+                        "ui:title": "Jaarlijkse salaris"
+                      }
+                    }
+                  },
+                  "buttons": {
+                    "cancel": {
+                      "display_name": "Annuleren"
+                    },
+                    "submit": {
+                      "display_name": "Verzenden"
+                    }
+                  },
+                  "jsonSchema": {
+                    "properties": {
+                      "field_1": {
+                        "title": "Startdatum van de werknemer"
+                      },
+                      "field_2": {
+                        "title": "Jaarlijkse salaris"
+                      }
+                    }
+                  }
+                },
+                "display_name": "Voer extra informatie in"
+              },
+              "metadata": {
+                "builderui:aigenerated": "all"
+              }
+            }
+          }
+        },
+        "user_ae56f8": {
+          "spec": {
+            "kind": "user",
+            "name": "user_ae56f8",
+            "fields": [
+              {
+                "kind": "boolean",
+                "name": "boolean_cda98c",
+                "direction": "input",
+                "output_schema": {
+                  "type": "object",
+                  "required": [
+                    "value"
+                  ],
+                  "properties": {
+                    "value": {
+                      "type": "boolean"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            ],
+            "owners": [],
+            "position": {
+              "x": 160,
+              "y": 104
+            },
+            "display_name": "Do you want to provide an ID card?",
+            "translations": {
+              "nl": {
+                "display_name": "Wilt u een identiteitskaart opgeven?"
+              },
+              "metadata": {
+                "builderui:aigenerated": "all"
+              }
+            }
+          }
+        },
+        "user_b37545": {
+          "spec": {
+            "kind": "user",
+            "name": "user_b37545",
+            "fields": [
+              {
+                "kind": "text",
+                "name": "text_output_b9e66f",
+                "text": "Enrolling user into the system ...",
+                "direction": "output",
+                "input_schema": {
+                  "type": "object",
+                  "required": [
+                    "value"
+                  ],
+                  "properties": {
+                    "value": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            ],
+            "owners": [],
+            "position": {
+              "x": 300,
+              "y": 1304
+            },
+            "display_name": "Enrolling message",
+            "translations": {
+              "nl": {
+                "text": "Gebruiker wordt ingeschreven in het systeem..."
+              },
+              "metadata": {
+                "builderui:aigenerated": "all"
+              }
+            }
+          }
+        },
+        "branch_553ea9": {
+          "spec": {
+            "kind": "branch",
+            "name": "branch_553ea9",
+            "position": {
+              "x": 160,
+              "y": 244
+            },
+            "evaluator": {
+              "conditions": [
+                {
+                  "default": false,
+                  "edge_id": "1eb8f86a-691a-4e35-9e88-099242760e1f",
+                  "metadata": {
+                    "id": "53076004-0d79-4744-a30f-ff475225ecf6",
+                    "conditions": [
+                      {
+                        "value": "True",
+                        "isValid": true,
+                        "dataType": "boolean",
+                        "operator": "is",
+                        "variableName": "flow[\"Employee Onboarding\"][\"Do you want to provide an ID card?\"].output.value"
+                      }
+                    ]
+                  },
+                  "expression": "flow[\"Employee Onboarding\"][\"Do you want to provide an ID card?\"].output.value is True"
+                },
+                {
+                  "default": true,
+                  "edge_id": "d65c1a39-25ae-490c-a1e5-311879637bb4",
+                  "metadata": {
+                    "id": "2327451b-0266-410c-bf7c-204668fb389a",
+                    "conditions": []
+                  },
+                  "expression": ""
+                }
+              ]
+            },
+            "display_name": "ID Card provided?",
+            "match_policy": "FIRST_MATCH"
+          }
+        },
+        "prompt_2977e4": {
+          "spec": {
+            "llm": "groq/openai/gpt-oss-120b",
+            "kind": "prompt",
+            "name": "prompt_2977e4",
+            "metadata": {
+              "creativity_slider_position": "5",
+              "creativity_slider_manual_override": false
+            },
+            "position": {
+              "x": 235,
+              "y": 664
+            },
+            "test_data": [
+              {
+                "value": "",
+                "source": "flow[\"Employee Onboarding\"][\"Process Identity Card\"].output.expiration_date"
+              },
+              {
+                "value": "",
+                "source": "flow[\"Employee Onboarding\"][\"Process Identity Card\"].output.date_of_birth"
+              }
+            ],
+            "description": "",
+            "user_prompt": "Convert the following date representation to the YYYY-MM-DD format.\n\ndate_of_birth: {flow[\"Employee Onboarding\"][\"Process Identity Card\"].output.date_of_birth}\nexpiration_date: {flow[\"Employee Onboarding\"][\"Process Identity Card\"].output.expiration_date}",
+            "display_name": "Date representation normalizer",
+            "input_schema": {
+              "type": "object",
+              "required": [],
+              "properties": {}
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "object": {
+                  "type": "object",
+                  "properties": {
+                    "date_of_birth": {
+                      "type": "string",
+                      "format": "date",
+                      "description": "Date of birth"
+                    },
+                    "expiration_date": {
+                      "type": "string",
+                      "format": "date",
+                      "description": "Expiration date"
+                    }
+                  },
+                  "description": ""
+                }
+              }
+            },
+            "system_prompt": "You are a helpfull assistant that converts between data representations.",
+            "llm_parameters": {
+              "top_k": 30,
+              "top_p": 0.7,
+              "temperature": 0.4,
+              "max_new_tokens": 200,
+              "min_new_tokens": 50,
+              "stop_sequences": [
+                "Human",
+                "AI"
+              ]
+            },
+            "prompt_examples": [],
+            "error_handler_config": {
+              "max_retries": 0,
+              "error_message": "Something went wrong while running 'Date representation normalizer'",
+              "retry_interval": 1000
+            },
+            "include_agent_context": false
+          },
+          "input_map": {
+            "spec": {
+              "maps": [],
+              "name": "",
+              "fallback_strategy": "ask_the_user"
+            }
+          }
+        },
+        "prompt_65a557": {
+          "spec": {
+            "llm": "groq/openai/gpt-oss-120b",
+            "kind": "prompt",
+            "name": "prompt_65a557",
+            "metadata": {
+              "creativity_slider_position": "5",
+              "creativity_slider_manual_override": false
+            },
+            "position": {
+              "x": 300,
+              "y": 1584
+            },
+            "test_data": [
+              {
+                "value": "",
+                "source": "flow[\"Employee Onboarding\"][\"Create a new employee\"].output.givenName"
+              },
+              {
+                "value": "",
+                "source": "flow[\"Employee Onboarding\"][\"Create a new employee\"].output.name"
+              },
+              {
+                "value": "",
+                "source": "flow[\"Employee Onboarding\"][\"Create a new employee\"].output.onboardingStatus"
+              },
+              {
+                "value": "",
+                "source": "flow[\"Employee Onboarding\"][\"Create a new employee\"].output.startDate"
+              },
+              {
+                "value": "",
+                "source": "flow[\"Employee Onboarding\"][\"Create a new employee\"].output.salary"
+              },
+              {
+                "value": "",
+                "source": "flow[\"Employee Onboarding\"][\"Create a new employee\"].output.id"
+              },
+              {
+                "value": "",
+                "source": "flow[\"Employee Onboarding\"][\"Create a new employee\"].output.gender"
+              }
+            ],
+            "description": "",
+            "user_prompt": "Summarize the employee Onboarding, use the following information\n\nid: {flow[\"Employee Onboarding\"][\"Create a new employee\"].output.id}\nFirst Name: {flow[\"Employee Onboarding\"][\"Create a new employee\"].output.givenName}\nName: {flow[\"Employee Onboarding\"][\"Create a new employee\"].output.name}\nStart date: {flow[\"Employee Onboarding\"][\"Create a new employee\"].output.startDate}\nAnnual salary: {flow[\"Employee Onboarding\"][\"Create a new employee\"].output.salary}\nGender: {flow[\"Employee Onboarding\"][\"Create a new employee\"].output.gender}\n\nOnboarding status: {flow[\"Employee Onboarding\"][\"Create a new employee\"].output.onboardingStatus}",
+            "display_name": "Onboarding summarizer",
+            "input_schema": {
+              "type": "object",
+              "required": [],
+              "properties": {}
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              }
+            },
+            "system_prompt": "You are a summarizing agent with knowledge of Employee onboarding",
+            "llm_parameters": {
+              "top_k": 30,
+              "top_p": 0.7,
+              "temperature": 0.4,
+              "max_new_tokens": 200,
+              "min_new_tokens": 50,
+              "stop_sequences": [
+                "Human",
+                "AI"
+              ]
+            },
+            "prompt_examples": [],
+            "error_handler_config": {
+              "max_retries": 0,
+              "error_message": "Something went wrong while running 'Onboarding summarizer'",
+              "retry_interval": 1000
+            },
+            "include_agent_context": false
+          },
+          "input_map": {
+            "spec": {
+              "maps": [],
+              "name": "",
+              "fallback_strategy": "ask_the_user"
+            }
+          }
+        },
+        "script_3b24ea": {
+          "spec": {
+            "fn": "today = datetime.date.today()\r\n\r\nself.output.start_date = (today + datetime.timedelta(days=28)).strftime(\"%Y-%m-%d\")\r\n\r\nself.output.min_date_of_birth = (today - datetime.timedelta(days=100*365)).strftime(\"%Y-%m-%d\")\r\nself.output.max_date_of_birth = (today - datetime.timedelta(days=18*365)).strftime(\"%Y-%m-%d\")",
+            "kind": "script",
+            "name": "script_3b24ea",
+            "position": {
+              "x": 160,
+              "y": 804
+            },
+            "display_name": "Date limits",
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "start_date": {
+                  "type": "string",
+                  "format": "date",
+                  "description": ""
+                },
+                "max_date_of_birth": {
+                  "type": "string",
+                  "format": "date",
+                  "description": ""
+                },
+                "min_date_of_birth": {
+                  "type": "string",
+                  "format": "date",
+                  "description": ""
+                }
+              }
+            }
+          }
+        },
+        "user_flow_6a2eda__end__": {
+          "spec": {
+            "kind": "end",
+            "name": "user_flow_6a2eda__end__",
+            "position": {
+              "x": 160,
+              "y": 2004
+            }
+          }
+        },
+        "user_flow_6a2eda__start__": {
+          "spec": {
+            "kind": "start",
+            "name": "user_flow_6a2eda__start__",
+            "position": {
+              "x": 160,
+              "y": -16
+            }
+          }
+        }
+      },
+      "schemas": {}
+    }
+  },
+  "schemas": {},
+  "metadata": {
+    "llm_model": "groq/openai/gpt-oss-120b",
+    "source_kind": "ui",
+    "is_system_generated_description": false
+  },
+  "output_map": {
+    "spec": {
+      "maps": [],
+      "name": "",
+      "fallback_strategy": "ask_the_user"
+    }
+  }
+}

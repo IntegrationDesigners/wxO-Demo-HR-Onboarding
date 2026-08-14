@@ -1,0 +1,173 @@
+{
+  "spec": {
+    "kind": "flow",
+    "name": "onboarding_send_slack_message",
+    "initiators": [],
+    "description": "Sends a message to Slack onboarding channel.",
+    "schedulable": true,
+    "display_name": "Send message to Slack onboarding channel",
+    "input_schema": {
+      "type": "object",
+      "required": [
+        "message"
+      ],
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "output_schema": {},
+    "translation_support": {
+      "enabled": true,
+      "source_locale": "en",
+      "target_locales": []
+    },
+    "suppress_agent_summarization": false
+  },
+  "edges": [
+    {
+      "id": "0b270b23-b540-4b0f-990c-1c6796c224c3",
+      "end": "user_flow_2f8f22",
+      "start": "__start__"
+    },
+    {
+      "id": "1529c402-09bf-4de7-82b4-3066f5c7fff8",
+      "end": "__end__",
+      "start": "user_flow_2f8f22"
+    }
+  ],
+  "nodes": {
+    "__end__": {
+      "spec": {
+        "kind": "end",
+        "name": "__end__",
+        "position": {
+          "x": 40,
+          "y": 564
+        }
+      }
+    },
+    "__start__": {
+      "spec": {
+        "kind": "start",
+        "name": "__start__",
+        "position": {
+          "x": 40,
+          "y": 20
+        }
+      }
+    },
+    "user_flow_2f8f22": {
+      "spec": {
+        "kind": "user_flow",
+        "name": "user_flow_2f8f22",
+        "metadata": {},
+        "position": {
+          "x": 20,
+          "y": 210
+        },
+        "dimensions": {
+          "width": 286,
+          "height": 294
+        },
+        "initiators": [],
+        "display_name": "Slack message",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "assignees": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "wxo-user"
+              }
+            }
+          }
+        }
+      },
+      "edges": [
+        {
+          "id": "823411b7-69df-485b-86e9-e48ece277039",
+          "end": "user_94ae00",
+          "start": "user_flow_2f8f22__start__"
+        },
+        {
+          "id": "5851a2fc-bfc7-49ac-97f8-2cf6679d8384",
+          "end": "user_flow_2f8f22__end__",
+          "start": "user_94ae00"
+        }
+      ],
+      "nodes": {
+        "user_94ae00": {
+          "spec": {
+            "kind": "user",
+            "name": "user_94ae00",
+            "label": "Message 1",
+            "fields": [
+              {
+                "kind": "text",
+                "name": "text_output_e85a67",
+                "text": "{flow.input.message}",
+                "direction": "output",
+                "input_schema": {
+                  "type": "object",
+                  "required": [
+                    "value"
+                  ],
+                  "properties": {
+                    "value": {
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            ],
+            "owners": [],
+            "metadata": {},
+            "position": {
+              "x": 20,
+              "y": 104
+            },
+            "display_name": "Send Slack message"
+          }
+        },
+        "user_flow_2f8f22__end__": {
+          "spec": {
+            "kind": "end",
+            "name": "user_flow_2f8f22__end__",
+            "position": {
+              "x": 20,
+              "y": 244
+            }
+          }
+        },
+        "user_flow_2f8f22__start__": {
+          "spec": {
+            "kind": "start",
+            "name": "user_flow_2f8f22__start__",
+            "position": {
+              "x": 20,
+              "y": -16
+            }
+          }
+        }
+      },
+      "schemas": {}
+    }
+  },
+  "schemas": {},
+  "metadata": {
+    "llm_model": "groq/openai/gpt-oss-120b",
+    "source_kind": "ui",
+    "is_system_generated_description": false
+  },
+  "output_map": {
+    "spec": {
+      "maps": [],
+      "name": "",
+      "fallback_strategy": "ask_the_user"
+    }
+  }
+}

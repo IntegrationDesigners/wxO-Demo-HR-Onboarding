@@ -1,0 +1,542 @@
+{
+  "spec": {
+    "kind": "flow",
+    "name": "onboarding_send_slack_message",
+    "initiators": [],
+    "description": "Sends a message to Slack onboarding channel.",
+    "schedulable": true,
+    "display_name": "Send message to Slack onboarding channel",
+    "input_schema": {
+      "type": "object",
+      "required": [
+        "message"
+      ],
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "output_schema": {},
+    "translation_support": {
+      "enabled": true,
+      "source_locale": "en",
+      "target_locales": []
+    },
+    "suppress_agent_summarization": false
+  },
+  "edges": [
+    {
+      "id": "0b270b23-b540-4b0f-990c-1c6796c224c3",
+      "end": "tool_fe70b8",
+      "start": "__start__"
+    },
+    {
+      "id": "ccccfe43-8c95-41a7-95c5-25a2be38d191",
+      "end": "script_895be7",
+      "start": "tool_fe70b8"
+    },
+    {
+      "id": "229571c6-0700-42a8-9d31-1f09f99a95d9",
+      "end": "__end__",
+      "start": "tool_642d9d"
+    },
+    {
+      "id": "547586a6-ace6-4dfe-b64a-d287e83f3d16",
+      "end": "tool_642d9d",
+      "start": "script_895be7"
+    }
+  ],
+  "nodes": {
+    "__end__": {
+      "spec": {
+        "kind": "end",
+        "name": "__end__",
+        "position": {
+          "x": 20,
+          "y": 844
+        }
+      }
+    },
+    "__start__": {
+      "spec": {
+        "kind": "start",
+        "name": "__start__",
+        "position": {
+          "x": 20,
+          "y": 152
+        }
+      }
+    },
+    "tool_642d9d": {
+      "spec": {
+        "kind": "tool",
+        "name": "tool_642d9d",
+        "tool": "send_a_slack_message_4d0d5:cb3920db-1f36-43c5-a0de-9988b318f0a5",
+        "position": {
+          "x": 20,
+          "y": 704
+        },
+        "description": "Sends a message to a Slack channel.\n",
+        "display_name": "Send a message in Slack",
+        "input_schema": {
+          "type": "object",
+          "required": [
+            "channel_id"
+          ],
+          "properties": {
+            "text": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "wrap_data": true
+                },
+                {
+                  "type": "null",
+                  "wrap_data": true
+                }
+              ],
+              "title": "Text",
+              "wrap_data": true,
+              "description": "The message content to send."
+            },
+            "blocks": {
+              "anyOf": [
+                {
+                  "wrap_data": true
+                },
+                {
+                  "type": "null",
+                  "wrap_data": true
+                }
+              ],
+              "title": "Blocks",
+              "wrap_data": true,
+              "description": "Layout and components to structure the message appearance."
+            },
+            "channel_id": {
+              "type": "string",
+              "title": "Channel Id",
+              "wrap_data": true,
+              "description": "The identifier of the channel where the message will be sent."
+            },
+            "attachments": {
+              "anyOf": [
+                {
+                  "wrap_data": true
+                },
+                {
+                  "type": "null",
+                  "wrap_data": true
+                }
+              ],
+              "title": "Attachments",
+              "wrap_data": true,
+              "description": "Additional formatting and details for the message."
+            }
+          }
+        },
+        "output_schema": {
+          "type": "object",
+          "required": [
+            "tool_output",
+            "error_details"
+          ],
+          "properties": {
+            "tool_output": {
+              "type": "object",
+              "title": "SendMessageResponse",
+              "required": [
+                "send_message_status"
+              ],
+              "wrap_data": true,
+              "properties": {
+                "http_code": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "wrap_data": true
+                    },
+                    {
+                      "type": "null",
+                      "wrap_data": true
+                    }
+                  ],
+                  "title": "Http Code",
+                  "wrap_data": true
+                },
+                "error_message": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "wrap_data": true
+                    },
+                    {
+                      "type": "null",
+                      "wrap_data": true
+                    }
+                  ],
+                  "title": "Error Message",
+                  "wrap_data": true
+                },
+                "send_message_status": {
+                  "type": "boolean",
+                  "title": "Send Message Status",
+                  "wrap_data": true
+                }
+              },
+              "description": "Represents the result of sending a message in Slack."
+            },
+            "error_details": {
+              "type": "object",
+              "title": "ErrorDetails",
+              "required": [
+                "status_code",
+                "url",
+                "reason",
+                "details",
+                "recommendation"
+              ],
+              "wrap_data": true,
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "title": "Url",
+                  "wrap_data": true
+                },
+                "reason": {
+                  "type": "string",
+                  "title": "Reason",
+                  "wrap_data": true
+                },
+                "details": {
+                  "anyOf": [
+                    {
+                      "wrap_data": true
+                    },
+                    {
+                      "type": "string",
+                      "wrap_data": true
+                    }
+                  ],
+                  "title": "Details",
+                  "wrap_data": true
+                },
+                "status_code": {
+                  "type": "integer",
+                  "title": "Status Code",
+                  "wrap_data": true
+                },
+                "recommendation": {
+                  "type": "string",
+                  "title": "Recommendation",
+                  "wrap_data": true
+                }
+              },
+              "description": "A unified wrapper to fetch all details about the error."
+            }
+          }
+        },
+        "error_handler_config": {
+          "max_retries": 0,
+          "error_message": "Something went wrong while running 'Send a message in Slack'",
+          "retry_interval": 1000
+        }
+      },
+      "input_map": {
+        "spec": {
+          "maps": [
+            {
+              "metadata": {
+                "assignmentType": "variable"
+              },
+              "has_no_value": false,
+              "target_variable": "self.input.text",
+              "value_expression": "flow.input.message"
+            },
+            {
+              "metadata": {
+                "assignmentType": "variable"
+              },
+              "has_no_value": false,
+              "target_variable": "self.input.channel_id",
+              "value_expression": "flow[\"Extract onboarding channel\"].output.id"
+            }
+          ],
+          "name": "",
+          "fallback_strategy": "ask_the_user"
+        }
+      }
+    },
+    "tool_fe70b8": {
+      "spec": {
+        "kind": "tool",
+        "name": "tool_fe70b8",
+        "tool": "get_all_slack_channels_e28e3:f0aabe18-42b2-471d-bd8c-4d691f98d19f",
+        "position": {
+          "x": 20,
+          "y": 424
+        },
+        "description": "Retrieves a list of channels from a workspace.\n",
+        "display_name": "Get all channels in Slack",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "wrap_data": true
+                },
+                {
+                  "type": "null",
+                  "wrap_data": true
+                }
+              ],
+              "title": "Limit",
+              "default": 20,
+              "wrap_data": true,
+              "description": "Maximum number of channels to return."
+            },
+            "types": {
+              "enum": [
+                "public_channel",
+                "private_channel",
+                "mpim",
+                "im"
+              ],
+              "type": "string",
+              "title": "Types",
+              "default": "public_channel",
+              "wrap_data": true,
+              "description": "Type of channels to retrieve (public_channel, private_channel, mpim, or im)."
+            },
+            "cursor": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "wrap_data": true
+                },
+                {
+                  "type": "null",
+                  "wrap_data": true
+                }
+              ],
+              "title": "Cursor",
+              "wrap_data": true,
+              "description": "Used for pagination to fetch additional results."
+            },
+            "team_id": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "wrap_data": true
+                },
+                {
+                  "type": "null",
+                  "wrap_data": true
+                }
+              ],
+              "title": "Team Id",
+              "wrap_data": true,
+              "description": "Specific team identifier to filter channels."
+            },
+            "exclude_archived": {
+              "anyOf": [
+                {
+                  "type": "boolean",
+                  "wrap_data": true
+                },
+                {
+                  "type": "null",
+                  "wrap_data": true
+                }
+              ],
+              "title": "Exclude Archived",
+              "default": true,
+              "wrap_data": true,
+              "description": "Whether to exclude archived channels from results."
+            }
+          }
+        },
+        "output_schema": {
+          "type": "object",
+          "required": [
+            "tool_output",
+            "error_details"
+          ],
+          "properties": {
+            "tool_output": {
+              "type": "object",
+              "title": "GetallchannelsResponse",
+              "required": [
+                "channels",
+                "next_cursor"
+              ],
+              "wrap_data": true,
+              "properties": {
+                "channels": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "title": "Channel",
+                    "required": [
+                      "channel_id",
+                      "channel_name",
+                      "is_channel",
+                      "is_im",
+                      "is_mpim",
+                      "is_private",
+                      "is_member"
+                    ],
+                    "wrap_data": true,
+                    "properties": {
+                      "is_im": {
+                        "type": "boolean",
+                        "title": "Is Im",
+                        "wrap_data": true
+                      },
+                      "is_mpim": {
+                        "type": "boolean",
+                        "title": "Is Mpim",
+                        "wrap_data": true
+                      },
+                      "is_member": {
+                        "type": "boolean",
+                        "title": "Is Member",
+                        "wrap_data": true
+                      },
+                      "channel_id": {
+                        "type": "string",
+                        "title": "Channel Id",
+                        "wrap_data": true
+                      },
+                      "is_channel": {
+                        "type": "boolean",
+                        "title": "Is Channel",
+                        "wrap_data": true
+                      },
+                      "is_private": {
+                        "type": "boolean",
+                        "title": "Is Private",
+                        "wrap_data": true
+                      },
+                      "channel_name": {
+                        "type": "string",
+                        "title": "Channel Name",
+                        "wrap_data": true
+                      }
+                    },
+                    "description": "Represents the Channel details in Slack."
+                  },
+                  "title": "Channels",
+                  "wrap_data": true
+                },
+                "next_cursor": {
+                  "type": "string",
+                  "title": "Next Cursor",
+                  "wrap_data": true
+                }
+              },
+              "description": "Represents the list of Channels in Slack."
+            },
+            "error_details": {
+              "type": "object",
+              "title": "ErrorDetails",
+              "required": [
+                "status_code",
+                "url",
+                "reason",
+                "details",
+                "recommendation"
+              ],
+              "wrap_data": true,
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "title": "Url",
+                  "wrap_data": true
+                },
+                "reason": {
+                  "type": "string",
+                  "title": "Reason",
+                  "wrap_data": true
+                },
+                "details": {
+                  "anyOf": [
+                    {
+                      "wrap_data": true
+                    },
+                    {
+                      "type": "string",
+                      "wrap_data": true
+                    }
+                  ],
+                  "title": "Details",
+                  "wrap_data": true
+                },
+                "status_code": {
+                  "type": "integer",
+                  "title": "Status Code",
+                  "wrap_data": true
+                },
+                "recommendation": {
+                  "type": "string",
+                  "title": "Recommendation",
+                  "wrap_data": true
+                }
+              },
+              "description": "A unified wrapper to fetch all details about the error."
+            }
+          }
+        },
+        "error_handler_config": {
+          "max_retries": 0,
+          "error_message": "Something went wrong while running 'Get all channels in Slack'",
+          "retry_interval": 1000
+        }
+      },
+      "input_map": {
+        "spec": {
+          "maps": [],
+          "name": "",
+          "fallback_strategy": "ask_the_user"
+        }
+      }
+    },
+    "script_895be7": {
+      "spec": {
+        "fn": "\n\nfor channel in flow[\"Get all channels in Slack\"].output.tool_output.channels:\n    if channel[\"channel_name\"] == \"onboarding\":\n        self.output.id = channel[\"channel_id\"]\n        break",
+        "kind": "script",
+        "name": "script_895be7",
+        "position": {
+          "x": 20,
+          "y": 564
+        },
+        "display_name": "Extract onboarding channel",
+        "output_schema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": ""
+            }
+          }
+        }
+      }
+    }
+  },
+  "schemas": {},
+  "metadata": {
+    "llm_model": "groq/openai/gpt-oss-120b",
+    "source_kind": "ui",
+    "is_system_generated_description": false
+  },
+  "output_map": {
+    "spec": {
+      "maps": [],
+      "name": "",
+      "fallback_strategy": "ask_the_user"
+    }
+  }
+}
