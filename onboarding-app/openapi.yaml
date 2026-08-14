@@ -1,0 +1,574 @@
+openapi: 3.0.3
+info:
+  title: Employee Onboarding App
+  description: >
+    REST API for managing employee onboarding processes and company car fleet operations.
+    Supports creating employee records, tracking CV creation and car provisioning status,
+    assigning cars from the fleet, and managing car availability.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+
+tags:
+  - name: Employee Management
+    description: APIs for managing employee onboarding processes including CV creation and car provisioning status
+  - name: Car Fleet Management
+    description: APIs for managing the company car fleet including availability tracking, assignment status, and car details across different price ranges
+
+paths:
+
+  # ---------------------------------------------------------------------------
+  # Employee endpoints
+  # ---------------------------------------------------------------------------
+
+  /api/employee:
+    get:
+      tags:
+        - Employee Management
+      summary: List all employees
+      description: >
+        Retrieves a list of all employees in the system with their ID, full name, and current
+        onboarding status. Use this endpoint to get a summary view before drilling down into
+        specific employee details using GET /api/employee/{id}.
+      operationId: getAllEmployees
+      responses:
+        '200':
+          description: List of employees retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: 123e4567-e89b-12d3-a456-426614174000
+                    name:
+                      type: string
+                      example: John Doe
+                    onboardingStatus:
+                      type: string
+                      example: In Progress
+
+    post:
+      tags:
+        - Employee Management
+      summary: Create a new employee
+      description: >
+        Creates a new employee record in the onboarding system. The employee is initialized
+        with a unique ID and default onboarding status (CV and car status set to false).
+        The system will automatically track when both CV creation and car provisioning are
+        completed to mark the overall onboarding as complete.
+      operationId: createEmployee
+      requestBody:
+        required: true
+        description: Employee details including given name, family name, start date, and gender
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmployeeRequest'
+      responses:
+        '201':
+          description: Employee successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+        '400':
+          description: Invalid input data – missing required fields or invalid format
+
+  /api/employee/{id}:
+    get:
+      tags:
+        - Employee Management
+      summary: Get employee onboarding status
+      description: >
+        Retrieves detailed information about an employee's onboarding status including their
+        start date, CV creation status, car provisioning status, and overall onboarding
+        completion status. The onboardingStatus field reflects one of three states:
+        'Completed' (both CV created and car provisioned),
+        'In Progress' (one or both steps not yet done), or
+        'Error' (carStatus is true but no car is actually assigned to the employee,
+        indicating a data inconsistency that requires manual correction).
+      operationId: getEmployee
+      parameters:
+        - $ref: '#/components/parameters/EmployeeId'
+      responses:
+        '200':
+          description: Employee found and returned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+        '404':
+          description: Employee not found with the specified ID
+
+    put:
+      tags:
+        - Employee Management
+      summary: Update employee onboarding status
+      description: >
+        Updates exactly one onboarding status field for an employee. Provide either cvStatus
+        OR carStatus — not both and not neither. The system automatically recalculates the
+        overall onboarding completion status. Onboarding is marked as complete only when
+        BOTH cvStatus=true AND carStatus=true.
+      operationId: updateEmployeeStatus
+      parameters:
+        - $ref: '#/components/parameters/EmployeeId'
+        - name: cvStatus
+          in: query
+          description: CV creation status – set to true when CV is created
+          required: false
+          schema:
+            type: boolean
+            example: true
+        - name: carStatus
+          in: query
+          description: Car provisioning status – set to true when car is assigned
+          required: false
+          schema:
+            type: boolean
+            example: true
+      responses:
+        '200':
+          description: Employee status updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+        '400':
+          description: Exactly one of cvStatus or carStatus must be provided
+        '404':
+          description: Employee not found with the specified ID
+
+  /api/employee/{id}/cv-status:
+    patch:
+      tags:
+        - Employee Management
+      summary: Update employee CV status
+      description: >
+        Updates the CV creation status of a specific employee. Set cvStatus to true when the
+        employee's CV has been created, or false to mark it as not yet done. The overall
+        onboarding status is automatically recalculated after the update.
+      operationId: updateCvStatus
+      parameters:
+        - $ref: '#/components/parameters/EmployeeId'
+        - name: cvStatus
+          in: query
+          description: CV creation status
+          required: true
+          schema:
+            type: boolean
+            example: true
+      responses:
+        '200':
+          description: CV status updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+        '404':
+          description: Employee not found with the specified ID
+
+  /api/employee/{employeeId}/assign-car/{carId}:
+    post:
+      tags:
+        - Employee Management
+      summary: Assign a car to an employee
+      description: >
+        Assigns a specific car to an employee and automatically updates both the employee's
+        car provisioning status and the car's assignment status. The employee's carStatus will
+        be set to true, and the car will be marked as Assigned with the employee's information.
+        The system validates that the car is available before assignment and automatically
+        recalculates the employee's onboarding status.
+      operationId: assignCarToEmployee
+      parameters:
+        - name: employeeId
+          in: path
+          description: Unique identifier of the employee
+          required: true
+          schema:
+            type: string
+            example: 123e4567-e89b-12d3-a456-426614174000
+        - name: carId
+          in: path
+          description: Unique identifier of the car to assign
+          required: true
+          schema:
+            type: string
+            example: car-123e4567
+      responses:
+        '200':
+          description: Car successfully assigned to employee
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+        '400':
+          description: Car is not available for assignment (already assigned or in maintenance)
+        '404':
+          description: Employee or car not found with the specified IDs
+
+  /api/employee/{employeeId}/unassign-car:
+    delete:
+      tags:
+        - Employee Management
+      summary: Unassign car from an employee
+      description: >
+        Removes the car assignment from an employee and automatically updates both the
+        employee's car provisioning status and the car's availability status. The employee's
+        carStatus will be set to false, assignedCarId will be cleared, and the car will be
+        marked as Available again. The system automatically recalculates the employee's
+        onboarding status.
+      operationId: unassignCarFromEmployee
+      parameters:
+        - name: employeeId
+          in: path
+          description: Unique identifier of the employee
+          required: true
+          schema:
+            type: string
+            example: 123e4567-e89b-12d3-a456-426614174000
+      responses:
+        '200':
+          description: Car successfully unassigned from employee
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+        '404':
+          description: Employee not found or employee has no car assigned
+
+  /api/employee/reload:
+    post:
+      tags:
+        - Employee Management
+      summary: Reload employees from CSV
+      description: >
+        Reloads all employee data from the CSV file (resources/data/employees.csv). This will
+        clear all existing employees and load fresh data from the file. Useful for resetting
+        the system to initial state or loading updated CSV data without restarting the application.
+      operationId: reloadEmployees
+      responses:
+        '200':
+          description: Employees successfully reloaded from CSV
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+
+  # ---------------------------------------------------------------------------
+  # Car endpoints
+  # ---------------------------------------------------------------------------
+
+  /api/car:
+    get:
+      tags:
+        - Car Fleet Management
+      summary: List all cars
+      description: >
+        Retrieves a complete list of all cars in the company fleet regardless of their
+        availability or assignment status. Each car includes details such as make/model,
+        license plate, price range class (1–4), current status, and assignment information
+        if applicable.
+      operationId: getAllCars
+      responses:
+        '200':
+          description: List of all cars retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Car'
+
+  /api/car/available:
+    get:
+      tags:
+        - Car Fleet Management
+      summary: List all available cars
+      description: >
+        Retrieves a filtered list of cars that are currently available for assignment to
+        employees. A car is considered available when its status is 'Available' and it is
+        not assigned to any employee. Cars in maintenance, reserved, or already assigned are
+        excluded from this list.
+      operationId: getAvailableCars
+      responses:
+        '200':
+          description: List of available cars retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Car'
+
+  /api/car/{id}:
+    get:
+      tags:
+        - Car Fleet Management
+      summary: Get car details
+      description: >
+        Retrieves detailed information about a specific car including its name (make/model),
+        license plate number, availability status, assigned employee information (if any),
+        price range class, and current operational status. Price range classes:
+        1=Economy, 2=Mid-range, 3=Premium, 4=Luxury.
+      operationId: getCarById
+      parameters:
+        - $ref: '#/components/parameters/CarId'
+      responses:
+        '200':
+          description: Car details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Car'
+        '404':
+          description: Car not found with the specified ID
+
+    post:
+      tags:
+        - Car Fleet Management
+      summary: Update car status
+      description: >
+        Updates the operational status of a specific car. Allowed status values are:
+        'Available' (ready for assignment), 'In Maintenance' (undergoing repairs or service),
+        and 'Reserved' (held for future assignment). Setting status to 'Available' is only
+        permitted if the car is not currently assigned to an employee.
+      operationId: updateCarStatus
+      parameters:
+        - $ref: '#/components/parameters/CarId'
+        - name: status
+          in: query
+          description: New status for the car
+          required: true
+          schema:
+            type: string
+            enum:
+              - Available
+              - In Maintenance
+              - Reserved
+            example: In Maintenance
+      responses:
+        '200':
+          description: Car status updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Car'
+        '400':
+          description: >
+            Invalid status value provided – must be one of: Available, In Maintenance, Reserved.
+            Setting Available is not allowed when the car is assigned to an employee.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Car not found with the specified ID
+
+  /api/car/reload:
+    post:
+      tags:
+        - Car Fleet Management
+      summary: Reload cars from CSV
+      description: >
+        Reloads all car fleet data from the CSV file (resources/data/cars.csv). This will
+        clear all existing cars and load fresh data from the file. If the CSV file is not
+        found, it will fall back to loading default hardcoded car data. Useful for resetting
+        the system to initial state or loading updated CSV data without restarting the application.
+      operationId: reloadCars
+      responses:
+        '200':
+          description: Cars successfully reloaded from CSV
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+
+# ---------------------------------------------------------------------------
+# Reusable components
+# ---------------------------------------------------------------------------
+
+components:
+
+  parameters:
+    EmployeeId:
+      name: id
+      in: path
+      description: Unique identifier of the employee
+      required: true
+      schema:
+        type: string
+        example: 123e4567-e89b-12d3-a456-426614174000
+
+    CarId:
+      name: id
+      in: path
+      description: Unique identifier of the car
+      required: true
+      schema:
+        type: string
+        example: car-123e4567
+
+  schemas:
+
+    Employee:
+      type: object
+      description: Employee entity with onboarding status information
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the employee
+          example: 123e4567-e89b-12d3-a456-426614174000
+        givenName:
+          type: string
+          description: Employee's given name (first name)
+          example: John
+        name:
+          type: string
+          description: Employee's family name (last name)
+          example: Doe
+        startDate:
+          type: string
+          format: date
+          description: Employee's start date
+          example: '2026-07-01'
+        gender:
+          type: string
+          description: Employee's gender
+          enum:
+            - Male
+            - Female
+            - Other
+          example: Male
+        salary:
+          type: number
+          description: Employee's annual salary
+          example: 75000.00
+        cvStatus:
+          type: boolean
+          description: CV creation status
+          default: false
+          example: false
+        carStatus:
+          type: boolean
+          description: Car provisioning status
+          default: false
+          example: false
+        assignedCarId:
+          type: string
+          description: ID of the car assigned to this employee
+          example: car-123e4567
+        onboardingStatus:
+          type: string
+          description: >
+            Overall onboarding status: 'Completed' (both CV created and car provisioned),
+            'In Progress' (one or both steps not yet done), or 'Error' (carStatus is true
+            but no car is actually assigned, indicating a data inconsistency).
+          enum:
+            - Completed
+            - In Progress
+            - Error
+          example: In Progress
+
+    EmployeeRequest:
+      type: object
+      description: Request body for creating a new employee
+      required:
+        - givenName
+        - name
+        - startDate
+        - gender
+        - salary
+      properties:
+        givenName:
+          type: string
+          description: Employee's given name (first name)
+          example: John
+        name:
+          type: string
+          description: Employee's family name (last name)
+          example: Doe
+        startDate:
+          type: string
+          format: date
+          description: Employee's start date
+          example: '2026-07-01'
+        gender:
+          type: string
+          description: Employee's gender
+          enum:
+            - Male
+            - Female
+            - Other
+          example: Male
+        salary:
+          type: number
+          description: Employee's annual salary
+          example: 75000.00
+
+    Car:
+      type: object
+      description: Car entity with availability and assignment information
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the car
+          example: car-123e4567
+        name:
+          type: string
+          description: Car make and model
+          example: BMW 3 Series
+        licensePlate:
+          type: string
+          description: Car license plate number
+          example: 2-JKL-012
+        available:
+          type: boolean
+          description: Whether the car is currently available for assignment
+          default: true
+          example: true
+        assignedEmployeeId:
+          type: string
+          description: ID of the employee assigned to this car
+          example: 123e4567-e89b-12d3-a456-426614174000
+        assignedEmployeeName:
+          type: string
+          description: Name of the employee assigned to this car
+          example: John Doe
+        priceRange:
+          type: integer
+          description: Car price range class (1=Economy, 2=Mid-range, 3=Premium, 4=Luxury)
+          minimum: 1
+          maximum: 4
+          example: 2
+        status:
+          type: string
+          description: Current operational status of the car
+          enum:
+            - Available
+            - Assigned
+            - In Maintenance
+            - Reserved
+          example: Available
+
+    MessageResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Cars reloaded successfully from CSV
+        status:
+          type: string
+          example: success
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Invalid status 'Assigned'. Allowed values: Available, In Maintenance, Reserved"

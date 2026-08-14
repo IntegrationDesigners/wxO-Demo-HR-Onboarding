@@ -1,0 +1,6 @@
+givenName,name,startDate,gender,salary,cvStatus,carStatus
+John,Doe,2026-07-01,Male,75000.00,false,false
+Jane,Smith,2026-07-15,Female,82000.00,true,false
+Michael,Johnson,2026-08-01,Male,68000.00,false,false
+Emily,Williams,2026-08-15,Female,91000.00,true,true
+David,Brown,2026-09-01,Male,78000.00,false,false

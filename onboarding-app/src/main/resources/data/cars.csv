@@ -1,0 +1,13 @@
+name,licensePlate,priceRange,status
+Toyota Corolla,1-ABC-123,1,Available
+Honda Civic,1-DEF-456,1,Available
+Volkswagen Golf,1-GHI-789,1,Available
+BMW 3 Series,2-JKL-012,2,Available
+Audi A4,2-MNO-345,2,Available
+Mercedes C-Class,2-PQR-678,2,Available
+BMW 5 Series,3-STU-901,3,Available
+Audi A6,3-VWX-234,3,Available
+Mercedes E-Class,3-YZA-567,3,In Maintenance
+BMW 7 Series,4-BCD-890,4,Available
+Audi A8,4-EFG-123,4,Available
+Mercedes S-Class,4-HIJ-456,4,Reserved
