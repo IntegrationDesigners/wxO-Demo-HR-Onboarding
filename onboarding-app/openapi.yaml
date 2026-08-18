@@ -84,10 +84,10 @@ paths:
     get:
       tags:
         - Employee Management
-      summary: Get employee onboarding status
+      summary: Get employee
       description: >
-        Retrieves detailed information about an employee's onboarding status including their
-        start date, CV creation status, car provisioning status, and overall onboarding
+        Retrieves detailed information about an employee, including their
+        salary, start date, CV creation status, car provisioning status, and overall onboarding
         completion status. The onboardingStatus field reflects one of three states:
         'Completed' (both CV created and car provisioned),
         'In Progress' (one or both steps not yet done), or
