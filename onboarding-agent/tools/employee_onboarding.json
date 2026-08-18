@@ -530,7 +530,7 @@
           "spec": {
             "kind": "tool",
             "name": "tool_a9810f",
-            "tool": "onboarding-app:create_employee",
+            "tool": "onboarding_createEmployee",
             "position": {
               "x": 300,
               "y": 1444
