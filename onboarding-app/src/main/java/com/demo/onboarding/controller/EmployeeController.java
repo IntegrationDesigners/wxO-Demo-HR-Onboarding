@@ -55,8 +55,8 @@ public class EmployeeController {
 
     @GetMapping("/{id}")
     @Operation(
-        summary = "Get employee onboarding status",
-        description = "Retrieves detailed information about an employee's onboarding status including their start date, CV creation status, car provisioning status, and overall onboarding completion status. The onboardingStatus field reflects one of three states: 'Completed' (both CV created and car provisioned), 'In Progress' (one or both steps not yet done), or 'Error' (carStatus is true but no car is actually assigned to the employee, indicating a data inconsistency that requires manual correction)."
+        summary = "Get employee",
+        description = "Retrieves detailed information about an employee's onboarding status including their salary, start date, CV creation status, car provisioning status, and overall onboarding completion status. The onboardingStatus field reflects one of three states: 'Completed' (both CV created and car provisioned), 'In Progress' (one or both steps not yet done), or 'Error' (carStatus is true but no car is actually assigned to the employee, indicating a data inconsistency that requires manual correction)."
     )
     @ApiResponses(value = {
         @ApiResponse(
