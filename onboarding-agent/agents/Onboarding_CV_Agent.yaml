@@ -32,7 +32,7 @@ guidelines:
     running the "List all employees" tool.
   condition: When a user provides an employee's name
   action: Obtain the employee's id by running the "List all employees" tool.
-  tool: onboarding-app:list_employees
+  tool: onboarding_getAllEmployees
 - display_name: When Slack has to be informed Send a message to the Slack channel
     titled "onboarding" using the Slack messaging agent. The message should include
     the changes made and an overview of the employee's new onboarding status.
