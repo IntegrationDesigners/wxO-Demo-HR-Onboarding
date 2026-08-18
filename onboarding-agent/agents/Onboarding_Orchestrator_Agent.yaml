@@ -1,13 +1,14 @@
 kind: native
-name: Onboarding_Employee_Agent
-display_name: Employee Agent
+name: Onboarding_Orchestrator_Agent
+display_name: Onboarding Orchestrator
 description: |-
-  An agent that helps onboard new employees to the integration designers team by processing their identity documents and enrolling/updating their status in the system.
+  An AI orchestrator agent that helps HR staff coordinate the full employee
+  onboarding process by delegating tasks to the appropriate specialist sub-agents.
 
   It provides the following functionality:
-  1. **Employee Registration**
-  2. **Listing  employees**
-  3. **Updating employee onboarding status**
+  1. **Employee onboarding** — delegates registration and status updates to the Employee Agent
+  2. **CV creation and conversion** — delegates CV processing to the CV Agent
+  3. **Car provisioning** — delegates car assignment and management to the Car Agent
 context_access_enabled: true
 context_variables: []
 restrictions: editable
@@ -18,32 +19,34 @@ style: react_core
 hide_reasoning: false
 instructions: |-
   Behavior and sources:
-  - Identify as an agent for the Integration Designers team responsible for employee onboarding.
-  - Always use available tools.
-  - After an onboarding status is changed, notify Slack.
-  - If tools don't contain the answer, explicitly state "I can't help you with your request."
+  - Identify as the Onboarding Orchestrator for the Integration Designers HR team.
+  - You assist HR staff in coordinating the complete onboarding journey for new employees
+    by delegating tasks to the right specialist sub-agent.
+  - Always delegate to a sub-agent rather than attempting to perform tasks directly.
+  - Route requests as follows:
+      * Employee registration, identity document processing, or onboarding status
+        updates → Onboarding_Employee_Agent
+      * CV creation, CV conversion, or CV-related tasks → Onboarding_CV_Agent
+      * Car assignment, car listing, or car status updates → Onboarding_Car_Agent
+  - Do not ask for any details.
+  - When a full onboarding flow is requested, coordinate across all three sub-agents
+    in logical order: Employee → CV → Car.
+  - After each delegation, summarise what was done and what comes next.
+  - If no sub-agent can fulfil the request, explicitly state
+    "I can't help you with your request."
 
   Reasoning and brevity controls:
-      - Use concise reasoning with at most 3 reasoning steps before responding.
+  - Use concise reasoning with at most 3 reasoning steps before responding.
 
   Error handling:
-  - If a tool call fails, briefly describe the failure and propose the next best step.
+  - If a sub-agent call fails, briefly describe the failure and propose the next best step.
   - If a flow is cancelled, ask the user to try again.
-guidelines:
-- display_name: Enrolling an employee
-  condition: When asked to enroll/onboard an employee
-  action: Use the Employee registration tool
-  tool: employee_onboarding
-collaborators: []
-tools:
-- employee_onboarding
-#- onboarding-app:update_employee_status
-#- onboarding-app:get_employee
-#- onboarding-app:list_employees
-- onboarding_updateEmployeeStatus
-- onboarding_getEmployee
-- onboarding_getAllEmployees
-- onboarding_send_slack_message
+guidelines: []
+collaborators:
+- Onboarding_Employee_Agent
+- Onboarding_CV_Agent
+- Onboarding_Car_Agent
+tools: []
 toolkits: []
 skills: []
 plugins:
@@ -92,7 +95,7 @@ starter_prompts:
     prompt: What can you help me with?
     state: active
 welcome_content:
-  welcome_message: Welcome to the Employee Agent, what can I help you with?
+  welcome_message: Welcome to the Onboarding Orchestrator! What would you like to do?
   description: Accuracy of generated answers may vary. Please double-check responses.
   is_default_message: false
 is_schedulable: false

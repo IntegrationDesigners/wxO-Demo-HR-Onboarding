@@ -8,7 +8,7 @@ description: |-
   1. **Updating car status**
   2. **Obtaining car details**
   3. **Listing cars**
-  5. **Assigment/Unassignment of cars**
+  5. **Assignment/Unassignment of cars**
 context_access_enabled: true
 context_variables: []
 restrictions: editable
@@ -34,13 +34,20 @@ instructions: |-
 guidelines: []
 collaborators: []
 tools:
-- onboarding-app:get_car
-- onboarding-app:list_available_cars
-- onboarding-app:list_cars
-- onboarding-app:unassign_car_from_employee
-- onboarding-app:assign_car_to_employee
-- onboarding-app:list_employees
-- onboarding-app:get_employee
+#- onboarding-app:get_car
+#- onboarding-app:list_available_cars
+#- onboarding-app:list_cars
+#- onboarding-app:unassign_car_from_employee
+#- onboarding-app:assign_car_to_employee
+#- onboarding-app:list_employees
+#- onboarding-app:get_employee
+- onboarding_getCar
+- onboarding_getAvailableCars
+- onboarding_getAllCars
+- onboarding_unassignCarFromEmployee
+- onboarding_assignCarToEmployee
+- onboarding_getAllEmployees
+- onboarding_getEmployee
 - onboarding_send_slack_message
 toolkits: []
 skills: []

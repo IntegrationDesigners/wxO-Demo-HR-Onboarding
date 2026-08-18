@@ -23,9 +23,9 @@
             "type": "string"
           },
           "default": [
-            "M",
-            "F",
-            "X"
+            "Male",
+            "Female",
+            "Other"
           ],
           "description": ""
         }
@@ -38,7 +38,7 @@
         "nl"
       ]
     },
-    "suppress_agent_summarization": true
+    "suppress_agent_summarization": false
   },
   "edges": [
     {

@@ -20,15 +20,11 @@ function Ok    { param([string]$msg) Write-Host "[OK]    $msg" -ForegroundColor 
 function Fail  { param([string]$msg) Write-Host "[ERROR] $msg" -ForegroundColor Red; exit 1 }
 
 # ---------------------------------------------------------------------------
-# 1. Toolkit - onboarding-app MCP server
+# 1. OpenAPI tool - onboarding-app REST API
 # ---------------------------------------------------------------------------
-Info "Removing existing toolkit (if present): onboarding-app"
-orchestrate toolkits remove -n onboarding-app 2>$null
-if ($LASTEXITCODE -ne 0) { Info "Toolkit not found, skipping delete." }
-
-Info "Importing toolkit: onboarding-app"
-orchestrate toolkits import -f "$ScriptDir\toolkits\onboarding-app.local.yaml"
-Ok "Toolkit imported: onboarding-app"
+Info "Importing OpenAPI tool: onboarding_api"
+orchestrate tools import -k openapi -f "$ScriptDir\tools\onboarding_api.local.yaml"
+Ok "OpenAPI tool imported: onboarding_api"
 
 # ---------------------------------------------------------------------------
 # 2. Flow tools
@@ -79,6 +75,10 @@ Ok "Agent imported: Onboarding_CV_Agent"
 Info "Importing agent: Onboarding_Employee_Agent"
 orchestrate agents import -f "$ScriptDir\agents\Onboarding_Employee_Agent.yaml"
 Ok "Agent imported: Onboarding_Employee_Agent"
+
+Info "Importing agent: Onboarding_Orchestrator_Agent"
+orchestrate agents import -f "$ScriptDir\agents\Onboarding_Orchestrator_Agent.yaml"
+Ok "Agent imported: Onboarding_Orchestrator_Agent"
 
 # ---------------------------------------------------------------------------
 Write-Host ""

@@ -43,9 +43,12 @@ guidelines:
   tool: onboarding_send_slack_message
 collaborators: []
 tools:
-- onboarding-app:update_cv_status
-- onboarding-app:get_employee
-- onboarding-app:list_employees
+#- onboarding-app:update_cv_status
+#- onboarding-app:get_employee
+#- onboarding-app:list_employees
+- onboarding_updateCvStatus
+- onboarding_getEmployee
+- onboarding_getAllEmployees
 - onboarding_cv_converter
 - onboarding_send_slack_message
 toolkits: []

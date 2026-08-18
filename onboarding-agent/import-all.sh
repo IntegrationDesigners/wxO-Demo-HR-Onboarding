@@ -24,14 +24,11 @@ ok()    { echo "[OK]    $*"; }
 error() { echo "[ERROR] $*" >&2; }
 
 # ---------------------------------------------------------------------------
-# 1. Toolkit — onboarding-app MCP server
+# 1. OpenAPI tool — onboarding-app REST API
 # ---------------------------------------------------------------------------
-info "Removing existing toolkit (if present): onboarding-app"
-orchestrate toolkits remove -n onboarding-app 2>/dev/null || true
-
-info "Importing toolkit: onboarding-app"
-orchestrate toolkits import -f "$SCRIPT_DIR/toolkits/onboarding-app.local.yaml"
-ok "Toolkit imported: onboarding-app"
+info "Importing OpenAPI tool: onboarding_api"
+orchestrate tools import -k openapi -f "$SCRIPT_DIR/tools/onboarding_api.local.yaml"
+ok "OpenAPI tool imported: onboarding_api"
 
 # ---------------------------------------------------------------------------
 # 2. Flow tools
@@ -82,6 +79,10 @@ ok "Agent imported: Onboarding_CV_Agent"
 info "Importing agent: Onboarding_Employee_Agent"
 orchestrate agents import -f "$SCRIPT_DIR/agents/Onboarding_Employee_Agent.yaml"
 ok "Agent imported: Onboarding_Employee_Agent"
+
+info "Importing agent: Onboarding_Orchestrator_Agent"
+orchestrate agents import -f "$SCRIPT_DIR/agents/Onboarding_Orchestrator_Agent.yaml"
+ok "Agent imported: Onboarding_Orchestrator_Agent"
 
 # ---------------------------------------------------------------------------
 echo ""

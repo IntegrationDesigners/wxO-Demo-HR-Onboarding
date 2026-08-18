@@ -38,10 +38,12 @@ wxO-Demo-HR-Onboarding/
     ├── agents/                   # Native agent YAML specs
     │   ├── Onboarding_Car_Agent.yaml
     │   ├── Onboarding_CV_Agent.yaml
-    │   └── Onboarding_Employee_Agent.yaml
-    ├── toolkits/                 # MCP toolkit specs
+    │   ├── Onboarding_Employee_Agent.yaml
+    │   └── Onboarding_Orchestrator_Agent.yaml
+    ├── toolkits/                 # MCP toolkit specs (reference / optional)
     │   └── onboarding-app.local.yaml
-    ├── tools/                    # Flow tools (JSON) and Python tools
+    ├── tools/                    # Flow tools (JSON), Python tools, OpenAPI spec
+    │   ├── onboarding_api.local.yaml     # OpenAPI spec imported as tool set
     │   ├── employee_onboarding.json
     │   ├── onboarding_cv_converter.json
     │   ├── onboarding_send_slack_message.json
@@ -112,42 +114,80 @@ The scripts execute the following steps in order:
 
 | Step | Action |
 |---|---|
-| 1 | Remove existing `onboarding-app` toolkit (if present), then re-import |
+| 1 | Import OpenAPI tool set from `onboarding_api.local.yaml` (generates individual `onboarding_*` tools) |
 | 2 | Import flow tools: `employee_onboarding`, `onboarding_cv_converter`, `process_cv`, `process_identity_card` |
 | 3 | Import dummy Slack flow tool (`onboarding_send_slack_message`) |
 | 4 | Import Python tool: `populate_word_template` |
 | 5 | Import agents: `Onboarding_Car_Agent`, `Onboarding_CV_Agent`, `Onboarding_Employee_Agent` |
+| 6 | Import orchestrator agent: `Onboarding_Orchestrator_Agent` (must be imported after all sub-agents) |
 
 ---
 
 ## watsonx Orchestrate Agents
 
+The agent layer follows an orchestrator / sub-agent pattern. HR staff interact exclusively with the **Onboarding Orchestrator**, which delegates tasks to the three specialist sub-agents.
+
+```
+Onboarding_Orchestrator_Agent
+├── Onboarding_Employee_Agent
+├── Onboarding_CV_Agent
+└── Onboarding_Car_Agent
+```
+
+### Onboarding_Orchestrator_Agent
+
+The top-level agent used by **HR staff**. It routes requests to the correct sub-agent and coordinates the full onboarding journey in logical order: Employee → CV → Car. It carries no direct tools — all work is done via collaborators.
+
+**Collaborators:** `Onboarding_Employee_Agent` · `Onboarding_CV_Agent` · `Onboarding_Car_Agent`
+
 ### Onboarding_Employee_Agent
 
 Handles employee registration, listing, and onboarding status updates. After any status change it notifies Slack.
 
-**Tools:** `employee_onboarding` · `onboarding-app:update_employee_status` · `onboarding-app:get_employee` · `onboarding-app:list_employees` · `onboarding_send_slack_message`
+**Tools:** `employee_onboarding` · `onboarding_updateEmployeeStatus` · `onboarding_getEmployee` · `onboarding_getAllEmployees` · `onboarding_send_slack_message`
 
 ### Onboarding_Car_Agent
 
 Handles car provisioning: listing, assignment/unassignment, and status updates. After a car is assigned it notifies Slack.
 
-**Tools:** `onboarding-app:get_car` · `onboarding-app:list_cars` · `onboarding-app:list_available_cars` · `onboarding-app:assign_car_to_employee` · `onboarding-app:unassign_car_from_employee` · `onboarding-app:list_employees` · `onboarding-app:get_employee` · `onboarding_send_slack_message`
+**Tools:** `onboarding_getCar` · `onboarding_getAllCars` · `onboarding_getAvailableCars` · `onboarding_assignCarToEmployee` · `onboarding_unassignCarFromEmployee` · `onboarding_getAllEmployees` · `onboarding_getEmployee` · `onboarding_send_slack_message`
 
 ### Onboarding_CV_Agent
 
 Handles CV conversion and status tracking. After a CV is created it notifies Slack.
 
-**Tools:** `onboarding_cv_converter` · `onboarding-app:update_cv_status` · `onboarding-app:get_employee` · `onboarding-app:list_employees` · `onboarding_send_slack_message`
+**Tools:** `onboarding_cv_converter` · `onboarding_updateCvStatus` · `onboarding_getEmployee` · `onboarding_getAllEmployees` · `onboarding_send_slack_message`
 
 ---
 
 ## watsonx Orchestrate Tools
 
+### OpenAPI tools (`onboarding_api.local.yaml`)
+
+Imported from the OpenAPI spec via `orchestrate tools import -k openapi`. Each `operationId` becomes a standalone tool.
+
+| Tool | Method | Description |
+|---|---|---|
+| `onboarding_getAllEmployees` | `GET /api/employee` | List all employees |
+| `onboarding_createEmployee` | `POST /api/employee` | Create a new employee record |
+| `onboarding_getEmployee` | `GET /api/employee/{id}` | Get details for a specific employee |
+| `onboarding_updateEmployeeStatus` | `PUT /api/employee/{id}` | Update `cvStatus` and/or `carStatus` |
+| `onboarding_updateCvStatus` | `PATCH /api/employee/{id}/cv-status` | Update CV status only |
+| `onboarding_assignCarToEmployee` | `POST /api/employee/{employeeId}/assign-car/{carId}` | Assign an available car to an employee |
+| `onboarding_unassignCarFromEmployee` | `DELETE /api/employee/{employeeId}/unassign-car` | Remove a car assignment |
+| `onboarding_reloadEmployees` | `POST /api/employee/reload` | Reset employee data from CSV |
+| `onboarding_getAllCars` | `GET /api/car` | List all cars in the fleet |
+| `onboarding_getAvailableCars` | `GET /api/car/available` | List only available cars |
+| `onboarding_getCar` | `GET /api/car/{id}` | Get details for a specific car |
+| `onboarding_updateCarStatus` | `POST /api/car/{id}` | Set car status (`Available` / `In Maintenance` / `Reserved`) |
+| `onboarding_reloadCars` | `POST /api/car/reload` | Reset car fleet data from CSV |
+
+### Flow & Python tools
+
 | Tool | Kind | Description |
 |---|---|---|
 | `employee_onboarding` | Flow | End-to-end employee onboarding flow with user interaction steps |
-| `onboarding_cv_converter` | Flow | Converts a CV document and stores the result |
+| `onboarding_cv_converter` | Flow | Converts a CV document and returns the result |
 | `process_cv` | Flow | Extracts structured data from a CV using document processing |
 | `process_identity_card` | Flow | Extracts identity fields from an identity card document |
 | `onboarding_send_slack_message` | Flow | No-op dummy Slack tool (simulates sending a message to the `#onboarding` channel) |
@@ -211,28 +251,28 @@ Full request/response schemas are documented in [`onboarding-app/openapi.yaml`](
 
 ---
 
-## MCP Tools
+## MCP Server
 
-The MCP server exposes the following tools for use with AI agents:
+The `onboarding-app-mcp` server wraps the same REST API as an **MCP (Model Context Protocol)** server using the Streamable HTTP transport. It exposes the same operations as the OpenAPI tools but under a different naming convention and is available as an alternative integration path (e.g. for MCP-native clients).
 
-| Tool | Description |
+Connect your client to `POST http://localhost:8888/mcp`.
+
+| MCP Tool | REST equivalent |
 |---|---|
-| `list_employees` | List all employees with onboarding status |
-| `get_employee` | Get details for a specific employee |
-| `create_employee` | Create a new employee record |
-| `update_cv_status` | Set `cvStatus` for a specific employee |
-| `update_employee_status` | Set `cvStatus` and/or `carStatus` in one call |
-| `assign_car_to_employee` | Assign an available car to an employee |
-| `unassign_car_from_employee` | Remove a car assignment |
-| `reload_employees` | Reset employee data from CSV |
-| `list_cars` | List all cars in the fleet |
-| `list_available_cars` | List only available cars |
-| `get_car` | Get details for a specific car |
-| `update_car_status` | Set car status to `Available`, `In Maintenance`, or `Reserved` |
-| `reload_cars` | Reset car fleet data from CSV |
-| `health_check` | Check application health |
-
-The MCP server uses the **Streamable HTTP** transport. Connect your client to `POST http://localhost:8888/mcp`.
+| `list_employees` | `GET /api/employee` |
+| `get_employee` | `GET /api/employee/{id}` |
+| `create_employee` | `POST /api/employee` |
+| `update_cv_status` | `PATCH /api/employee/{id}/cv-status` |
+| `update_employee_status` | `PUT /api/employee/{id}` |
+| `assign_car_to_employee` | `POST /api/employee/{employeeId}/assign-car/{carId}` |
+| `unassign_car_from_employee` | `DELETE /api/employee/{employeeId}/unassign-car` |
+| `reload_employees` | `POST /api/employee/reload` |
+| `list_cars` | `GET /api/car` |
+| `list_available_cars` | `GET /api/car/available` |
+| `get_car` | `GET /api/car/{id}` |
+| `update_car_status` | `POST /api/car/{id}` |
+| `reload_cars` | `POST /api/car/reload` |
+| `health_check` | — |
 
 ---
 
