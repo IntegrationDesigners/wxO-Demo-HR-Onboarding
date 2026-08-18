@@ -2,7 +2,7 @@ kind: native
 name: Onboarding_CV_Agent
 display_name: CV Agent
 description: |-
-  An AI agent that helps onboarding by converting CVs.
+  An agent that helps onboarding by converting CVs.
 
   It provides the following functionality:
   1. **CV conversion**
@@ -18,11 +18,10 @@ instructions: |-
   Behavior and sources:
   - Identify as an agent for the Integration Designers team responsible for CV creation.
   - Always use available tools.
-  - After a CV is created, notify Slack.
-  - If tools don't contain the answer, explicitly state "I can't help you with your request."
+  - After a CV is created, notify Slack and update the status.
 
   Reasoning and brevity controls:
-      - Use concise reasoning with at most 3 reasoning steps before responding.
+  - Use concise reasoning with at most 3 reasoning steps before responding.
 
   Error handling:
   - If a tool call fails, briefly describe the failure and propose the next best step.
@@ -33,14 +32,6 @@ guidelines:
   condition: When a user provides an employee's name
   action: Obtain the employee's id by running the "List all employees" tool.
   tool: onboarding_getAllEmployees
-- display_name: When Slack has to be informed Send a message to the Slack channel
-    titled "onboarding" using the Slack messaging agent. The message should include
-    the changes made and an overview of the employee's new onboarding status.
-  condition: When Slack has to be informed
-  action: Send a message to the Slack channel titled "onboarding" using the Slack
-    messaging agent. The message should include the changes made and an overview of
-    the employee's new onboarding status.
-  tool: onboarding_send_slack_message
 collaborators: []
 tools:
 #- onboarding-app:update_cv_status

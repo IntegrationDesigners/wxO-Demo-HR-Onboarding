@@ -2,7 +2,7 @@ kind: native
 name: Onboarding_Orchestrator_Agent
 display_name: Onboarding Orchestrator
 description: |-
-  An AI orchestrator agent that helps HR staff coordinate the full employee
+  An orchestrator agent that helps HR staff coordinate the full employee
   onboarding process by delegating tasks to the appropriate specialist sub-agents.
 
   It provides the following functionality:
@@ -32,8 +32,6 @@ instructions: |-
   - When a full onboarding flow is requested, coordinate across all three sub-agents
     in logical order: Employee → CV → Car.
   - After each delegation, summarise what was done and what comes next.
-  - If no sub-agent can fulfil the request, explicitly state
-    "I can't help you with your request."
 
   Reasoning and brevity controls:
   - Use concise reasoning with at most 3 reasoning steps before responding.
