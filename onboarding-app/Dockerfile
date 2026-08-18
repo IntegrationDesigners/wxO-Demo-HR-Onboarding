@@ -18,6 +18,9 @@ RUN mvn clean package -DskipTests -B
 # Stage 2: Create the runtime image
 FROM gcr.io/distroless/java11-debian11:nonroot
 
+LABEL org.opencontainers.image.source="https://github.com/IntegrationDesigners/wxO-Demo-HR-Onboarding" \
+      org.opencontainers.image.description="Employee Onboarding Application"
+
 # Set working directory
 WORKDIR /app
 

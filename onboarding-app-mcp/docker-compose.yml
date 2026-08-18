@@ -1,0 +1,15 @@
+services:
+  onboarding-app-mcp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: onboarding-app-mcp:latest
+    container_name: onboarding-app-mcp
+    ports:
+      - "8888:8888"
+    environment:
+      PORT: "8888"
+      ONBOARDING_API_URL: "http://host.docker.internal:8082"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped

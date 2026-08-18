@@ -1,0 +1,10 @@
+services:
+  onboarding-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: onboarding-app:latest
+    container_name: onboarding-app
+    ports:
+      - "8082:8080"
+    restart: unless-stopped

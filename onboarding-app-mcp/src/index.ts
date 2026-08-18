@@ -12,7 +12,7 @@ const BASE_URL =
 
 const PORT = parseInt(process.env.PORT ?? "8888", 10);
 
-// ─── helpers ─────────────────────────────────────────────────────────────────
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 async function apiFetch(
   path: string,
@@ -35,10 +35,12 @@ async function apiFetch(
   return { ok: res.ok, status: res.status, body };
 }
 
-function toText(result: { ok: boolean; status: number; body: unknown }): {
-  content: [{ type: "text"; text: string }];
-  isError?: boolean;
-} {
+function toResult(result: {
+  ok: boolean;
+  status: number;
+  body: unknown;
+}): { content: [{ type: "text"; text: string }]; isError?: boolean } {
+  console.log(result)
   const text =
     typeof result.body === "string"
       ? result.body
@@ -50,8 +52,53 @@ function toText(result: { ok: boolean; status: number; body: unknown }): {
       isError: true,
     };
   }
+
   return { content: [{ type: "text", text }] };
 }
+
+// ─── Output schemas ───────────────────────────────────────────────────────────
+
+const employeeSchema = z.object({
+  id: z.string().describe("Unique identifier of the employee (UUID format)"),
+  givenName: z.string().describe("Employee's first name"),
+  name: z.string().describe("Employee's family name (last name)"),
+  startDate: z.string().describe("Employee's start date (YYYY-MM-DD)"),
+  gender: z.enum(["Male", "Female", "Other"]).describe("Employee's gender"),
+  salary: z.number().describe("Employee's annual salary"),
+  cvStatus: z.boolean().describe("Whether the employee's CV has been created"),
+  carStatus: z.boolean().describe("Whether a car has been provisioned"),
+  assignedCarId: z
+    .string()
+    .nullable()
+    .describe("ID of the assigned car, or null if no car is assigned"),
+  onboardingStatus: z
+    .enum(["Completed", "In Progress", "Error"])
+    .describe("Overall onboarding status"),
+});
+
+const carSchema = z.object({
+  id: z.string().describe("Unique identifier of the car"),
+  make: z.string().describe("Car manufacturer (e.g. Toyota, BMW)"),
+  model: z.string().describe("Car model name"),
+  licensePlate: z.string().describe("Car license plate number"),
+  priceRangeClass: z
+    .number()
+    .int()
+    .min(1)
+    .max(4)
+    .describe("Price range class: 1=Economy, 2=Mid-range, 3=Premium, 4=Luxury"),
+  status: z
+    .enum(["Available", "Assigned", "In Maintenance", "Reserved"])
+    .describe("Current operational status of the car"),
+  assignedEmployeeId: z
+    .string()
+    .nullable()
+    .describe("ID of the employee the car is assigned to, or null"),
+});
+
+const healthSchema = z.object({
+  status: z.enum(["UP", "DOWN"]).describe("Application health status"),
+});
 
 // ─── MCP server factory ───────────────────────────────────────────────────────
 
@@ -66,8 +113,9 @@ function createMcpServer(): McpServer {
       description:
         "List all employees with their ID, full name, and current onboarding status (Completed / In Progress / Error).",
       inputSchema: z.object({}),
+      // outputSchema: z.array(employeeSchema),
     },
-    async () => toText(await apiFetch("/api/employee"))
+    async () => toResult(await apiFetch("/api/employee"))
   );
 
   server.registerTool(
@@ -80,8 +128,9 @@ function createMcpServer(): McpServer {
           .string()
           .describe("Unique identifier of the employee (UUID format)"),
       }),
+      outputSchema: employeeSchema,
     },
-    async ({ id }) => toText(await apiFetch(`/api/employee/${id}`))
+    async ({ id }) => toResult(await apiFetch(`/api/employee/${id}`))
   );
 
   server.registerTool(
@@ -103,14 +152,15 @@ function createMcpServer(): McpServer {
           .positive()
           .describe("Employee's annual salary (must be > 0)"),
       }),
+      outputSchema: employeeSchema,
     },
-    async (body) =>
-      toText(
-        await apiFetch("/api/employee", {
-          method: "POST",
-          body: JSON.stringify(body),
-        })
-      )
+    async (body) => {
+      const result = await apiFetch("/api/employee", {
+        method: "POST",
+        body: JSON.stringify(body),
+      });
+      return toResult(result);
+    }
   );
 
   server.registerTool(
@@ -126,14 +176,15 @@ function createMcpServer(): McpServer {
           .boolean()
           .describe("CV creation status: true when CV has been created, false otherwise"),
       }),
+      outputSchema: employeeSchema,
     },
-    async ({ id, cvStatus }) =>
-      toText(
-        await apiFetch(
-          `/api/employee/${id}/cv-status?cvStatus=${cvStatus}`,
-          { method: "PATCH" }
-        )
-      )
+    async ({ id, cvStatus }) => {
+      const result = await apiFetch(
+        `/api/employee/${id}/cv-status?cvStatus=${cvStatus}`,
+        { method: "PATCH" }
+      );
+      return toResult(result);
+    }
   );
 
   server.registerTool(
@@ -155,13 +206,14 @@ function createMcpServer(): McpServer {
           .optional()
           .describe("Set to true when a car has been provisioned"),
       }),
+      outputSchema: employeeSchema,
     },
     async ({ id, cvStatus, carStatus }) => {
       const params = new URLSearchParams();
       if (cvStatus !== undefined) params.set("cvStatus", String(cvStatus));
       if (carStatus !== undefined) params.set("carStatus", String(carStatus));
       const qs = params.toString() ? `?${params.toString()}` : "";
-      return toText(
+      return toResult(
         await apiFetch(`/api/employee/${id}${qs}`, { method: "PUT" })
       );
     }
@@ -179,13 +231,15 @@ function createMcpServer(): McpServer {
           .string()
           .describe("Unique identifier of the car to assign (e.g. car-123e4567)"),
       }),
+      outputSchema: employeeSchema,
     },
-    async ({ employeeId, carId }) =>
-      toText(
-        await apiFetch(`/api/employee/${employeeId}/assign-car/${carId}`, {
-          method: "POST",
-        })
-      )
+    async ({ employeeId, carId }) => {
+      const result = await apiFetch(
+        `/api/employee/${employeeId}/assign-car/${carId}`,
+        { method: "POST" }
+      );
+      return toResult(result);
+    }
   );
 
   server.registerTool(
@@ -197,13 +251,15 @@ function createMcpServer(): McpServer {
       inputSchema: z.object({
         employeeId: z.string().describe("Unique identifier of the employee"),
       }),
+      outputSchema: employeeSchema,
     },
-    async ({ employeeId }) =>
-      toText(
-        await apiFetch(`/api/employee/${employeeId}/unassign-car`, {
-          method: "DELETE",
-        })
-      )
+    async ({ employeeId }) => {
+      const result = await apiFetch(
+        `/api/employee/${employeeId}/unassign-car`,
+        { method: "DELETE" }
+      );
+      return toResult(result);
+    }
   );
 
   server.registerTool(
@@ -213,9 +269,12 @@ function createMcpServer(): McpServer {
         "Reset all employee data by reloading from the CSV file (resources/data/employees.csv). " +
         "This clears all current employee records and restores the initial dataset.",
       inputSchema: z.object({}),
+      // outputSchema: z.array(employeeSchema),
     },
-    async () =>
-      toText(await apiFetch("/api/employee/reload", { method: "POST" }))
+    async () => {
+      const result = await apiFetch("/api/employee/reload", { method: "POST" });
+      return toResult(result);
+    }
   );
 
   // ─── Car Fleet Management tools ─────────────────────────────────────────────
@@ -228,8 +287,9 @@ function createMcpServer(): McpServer {
         "Includes make/model, license plate, price range class (1=Economy, 2=Mid-range, 3=Premium, 4=Luxury), " +
         "status, and assignment information.",
       inputSchema: z.object({}),
+      // outputSchema: z.array(carSchema),
     },
-    async () => toText(await apiFetch("/api/car"))
+    async () => toResult(await apiFetch("/api/car"))
   );
 
   server.registerTool(
@@ -239,8 +299,9 @@ function createMcpServer(): McpServer {
         "List only cars that are currently available for assignment to employees. " +
         "Excludes cars that are Assigned, In Maintenance, or Reserved.",
       inputSchema: z.object({}),
+      // outputSchema: z.array(carSchema),
     },
-    async () => toText(await apiFetch("/api/car/available"))
+    async () => toResult(await apiFetch("/api/car/available"))
   );
 
   server.registerTool(
@@ -252,8 +313,9 @@ function createMcpServer(): McpServer {
       inputSchema: z.object({
         id: z.string().describe("Unique identifier of the car (e.g. car-123e4567)"),
       }),
+      outputSchema: carSchema,
     },
-    async ({ id }) => toText(await apiFetch(`/api/car/${id}`))
+    async ({ id }) => toResult(await apiFetch(`/api/car/${id}`))
   );
 
   server.registerTool(
@@ -270,13 +332,15 @@ function createMcpServer(): McpServer {
           .enum(["Available", "In Maintenance", "Reserved"])
           .describe("New operational status for the car"),
       }),
+      outputSchema: carSchema,
     },
-    async ({ id, status }) =>
-      toText(
-        await apiFetch(`/api/car/${id}?status=${encodeURIComponent(status)}`, {
-          method: "POST",
-        })
-      )
+    async ({ id, status }) => {
+      const result = await apiFetch(
+        `/api/car/${id}?status=${encodeURIComponent(status)}`,
+        { method: "POST" }
+      );
+      return toResult(result);
+    }
   );
 
   server.registerTool(
@@ -287,8 +351,12 @@ function createMcpServer(): McpServer {
         "Falls back to default hardcoded data if CSV is not found. " +
         "This clears all current car records and restores the initial fleet.",
       inputSchema: z.object({}),
+      // outputSchema: z.array(carSchema),
     },
-    async () => toText(await apiFetch("/api/car/reload", { method: "POST" }))
+    async () => {
+      const result = await apiFetch("/api/car/reload", { method: "POST" });
+      return toResult(result);
+    }
   );
 
   // ─── Health & Monitoring tools ───────────────────────────────────────────────
@@ -297,11 +365,11 @@ function createMcpServer(): McpServer {
     "health_check",
     {
       description:
-        "Check the health status of the Employee Onboarding application. " +
-        "Returns UP when the application is healthy, 503 when unhealthy.",
+        "Check the health status of the Employee Onboarding application.",
       inputSchema: z.object({}),
+      outputSchema: healthSchema,
     },
-    async () => toText(await apiFetch("/actuator/health"))
+    async () => toResult(await apiFetch("/actuator/health"))
   );
 
   return server;

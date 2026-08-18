@@ -13,6 +13,9 @@ RUN npm run build
 # ── Runtime stage ───────────────────────────────────────────────────────────────
 FROM node:22-alpine
 
+LABEL org.opencontainers.image.source="https://github.com/IntegrationDesigners/wxO-Demo-HR-Onboarding" \
+      org.opencontainers.image.description="Employee Onboarding MCP Server"
+
 WORKDIR /app
 
 COPY package*.json ./
