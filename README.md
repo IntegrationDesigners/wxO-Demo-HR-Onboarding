@@ -40,6 +40,10 @@ wxO-Demo-HR-Onboarding/
     │   ├── Onboarding_CV_Agent.yaml
     │   ├── Onboarding_Employee_Agent.yaml
     │   └── Onboarding_Orchestrator_Agent.yaml
+    ├── knowledge-bases/          # Knowledge base specs and source documents
+    │   ├── car_policy.yaml
+    │   └── documents/
+    │       └── car_policy.txt
     ├── toolkits/                 # MCP toolkit specs (reference / optional)
     │   └── onboarding-app.local.yaml
     ├── tools/                    # Flow tools (JSON), Python tools, OpenAPI spec
@@ -118,8 +122,9 @@ The scripts execute the following steps in order:
 | 2 | Import flow tools: `employee_onboarding`, `onboarding_cv_converter`, `process_cv`, `process_identity_card` |
 | 3 | Import dummy Slack flow tool (`onboarding_send_slack_message`) |
 | 4 | Import Python tool: `populate_word_template` |
-| 5 | Import agents: `Onboarding_Car_Agent`, `Onboarding_CV_Agent`, `Onboarding_Employee_Agent` |
-| 6 | Import orchestrator agent: `Onboarding_Orchestrator_Agent` (must be imported after all sub-agents) |
+| 5 | Import knowledge base: `Onboarding_Car_Policy` |
+| 6 | Import agents: `Onboarding_Car_Agent`, `Onboarding_CV_Agent`, `Onboarding_Employee_Agent` |
+| 7 | Import orchestrator agent: `Onboarding_Orchestrator_Agent` (must be imported after all sub-agents) |
 
 ---
 
@@ -148,15 +153,27 @@ Handles employee registration, listing, and onboarding status updates. After any
 
 ### Onboarding_Car_Agent
 
-Handles car provisioning: listing, assignment/unassignment, and status updates. After a car is assigned it notifies Slack.
+Handles car provisioning: listing, assignment/unassignment, and status updates. After a car is assigned it notifies Slack. Uses the `Onboarding_Car_Policy` knowledge base to answer policy questions about car eligibility and entitlements.
 
 **Tools:** `onboarding_getCar` · `onboarding_getAllCars` · `onboarding_getAvailableCars` · `onboarding_assignCarToEmployee` · `onboarding_unassignCarFromEmployee` · `onboarding_getAllEmployees` · `onboarding_getEmployee` · `onboarding_send_slack_message`
+
+**Knowledge base:** `Onboarding_Car_Policy`
 
 ### Onboarding_CV_Agent
 
 Handles CV conversion and status tracking. After a CV is created it notifies Slack.
 
 **Tools:** `onboarding_cv_converter` · `onboarding_updateCvStatus` · `onboarding_getEmployee` · `onboarding_getAllEmployees` · `onboarding_send_slack_message`
+
+---
+
+## watsonx Orchestrate Knowledge Bases
+
+| Knowledge Base | Source document | Used by |
+|---|---|---|
+| `Onboarding_Car_Policy` | [`knowledge-bases/documents/car_policy.txt`](onboarding-agent/knowledge-bases/documents/car_policy.txt) | `Onboarding_Car_Agent` |
+
+The knowledge base is imported with `orchestrate knowledge-bases import` using the spec file [`knowledge-bases/car_policy.yaml`](onboarding-agent/knowledge-bases/car_policy.yaml). It allows the Car Agent to answer natural-language questions about the company car policy (eligibility criteria, allowed models, fuel card rules, etc.) without hard-coding that information in the agent instructions.
 
 ---
 

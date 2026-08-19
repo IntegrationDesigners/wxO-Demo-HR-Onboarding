@@ -1,0 +1,90 @@
+Company Car Policy
+
+Version: 1.0
+Effective date: January 1, 2026
+Owner: Human Resources
+
+========================================
+
+1. Purpose
+
+This policy establishes the rules governing the assignment of company vehicles to eligible employees. The goal is to provide employees with appropriate transportation support in a fair and cost-effective manner.
+
+========================================
+
+2. Scope
+
+This policy applies to all permanent, full-time employees. Temporary, part-time, and contract workers are not eligible for a company car.
+
+========================================
+
+3. Car Assignment by Salary Price Range
+
+Company cars are assigned based on the employee's annual gross base salary at the time of onboarding or the most recent compensation review. The four price ranges and their corresponding vehicle categories are defined below.
+
+Price Range 1 - Below $60,000 / year
+
+  Eligible vehicle category: Economy
+  Employees in this range are assigned a compact or subcompact economy vehicle.
+
+  Fuel budget (monthly):  $150
+  Lease term:             36 months
+  Private use allowed:    Yes, subject to benefit-in-kind taxation
+
+----
+
+Price Range 2 - $60,000 up to $70,000 / year
+
+  Eligible vehicle category: Compact
+  Employees in this range are assigned a mid-range compact or family hatchback.
+
+  Fuel budget (monthly):  $200
+  Lease term:             36 months
+  Private use allowed:    Yes, subject to benefit-in-kind taxation
+
+----
+
+Price Range 3 - $70,000 up to $80,000 / year
+
+  Eligible vehicle category: Mid-size / Executive Compact
+  Employees in this range are assigned a mid-size or entry-level executive vehicle.
+
+  Fuel budget (monthly):  $275
+  Lease term:             48 months
+  Private use allowed:    Yes, subject to benefit-in-kind taxation
+
+----
+
+Price Range 4 - $80,000 and above / year
+
+  Eligible vehicle category: Executive / Premium
+  Employees in this range are assigned a full executive or premium segment vehicle.
+
+  Fuel budget (monthly):  $375
+  Lease term:             48 months
+  Private use allowed:    Yes, subject to benefit-in-kind taxation
+
+========================================
+
+4. General Rules
+
+- New employees will receive their assigned vehicle within 30 days of their start date.
+- Vehicle upgrades are only possible at the end of the current lease term or upon a confirmed promotion that moves the employee into a higher salary price range.
+- Downgrade protection: Employees whose salary decreases will retain their current vehicle until the end of the active lease term.
+- Returning a vehicle: Upon termination, resignation, or end of eligibility, the vehicle must be returned within 5 working days.
+- Accidents and damages: All accidents must be reported to HR and the Fleet Manager within 24 hours. The employee bears any excess/deductible costs for incidents caused by negligence.
+- Traffic fines and violations are always the personal responsibility of the driver.
+
+========================================
+
+5. Fuel & Charging Policy
+
+- Fuel cards are issued for all Price Range 1-4 vehicles. Monthly fuel budgets are listed in Section 3.
+- Overuse of the fuel budget exceeding 20% in a single month must be justified in writing to the Fleet Manager.
+- Electric vehicle (EV) variants are encouraged across all price ranges; employees choosing an EV equivalent receive a 10% increase in their monthly energy budget.
+
+========================================
+
+6. Contact
+
+For questions regarding this policy, contact the HR Fleet Administration team at fleet@example.com or raise a request through the internal HR portal.

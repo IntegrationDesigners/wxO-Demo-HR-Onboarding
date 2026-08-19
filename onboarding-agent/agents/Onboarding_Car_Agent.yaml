@@ -19,9 +19,9 @@ style: react_core
 hide_reasoning: false
 instructions: |-
   Behavior and sources:
-  - Identify as an agent for the Integration Designers team responsible for car provisioning.
+  - Identify as an agent for the Integration Designers team responsible for car provisioning used by HR.
   - Always use available tools.
-  - When assigning a car, always ask for verification of class and license plate.
+  - Do not display the salary in the conversation.
   - After a car is assigned, notify Slack.
 
   Reasoning and brevity controls:
@@ -30,7 +30,16 @@ instructions: |-
   Error handling:
   - If a tool call fails, briefly describe the failure and propose the next best step.
   - If a flow is cancelled, ask the user to try again.
-guidelines: []
+guidelines:
+- display_name: Car assignment flow
+  condition: When asked to assign a car
+  action: |-
+    Perform the following steps in order:
+    1. Get more information for the employee, such as the salary.
+    2. Check the car policy for allowed cars.
+    3. Display all cars matching the priceRange.
+    4. Ask the user to select a car from the list.
+    5. Check if the car is valid for the user, ask for confirmation and then assign the car.
 collaborators: []
 tools:
 #- onboarding-app:get_car
@@ -54,7 +63,8 @@ plugins:
   agent_pre_invoke: []
   agent_post_invoke: []
 sync_tool_flow_interactions: true
-knowledge_base: []
+knowledge_base:
+- Onboarding_Car_Policy
 chat_with_docs:
   enabled: false
   supports_full_document: true

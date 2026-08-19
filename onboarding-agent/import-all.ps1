@@ -62,7 +62,14 @@ orchestrate tools import -k python `
 Ok "Python tool imported: populate_word_template"
 
 # ---------------------------------------------------------------------------
-# 5. Agents (import sub-agents before the orchestrating agent)
+# 5. Knowledge bases
+# ---------------------------------------------------------------------------
+Info "Importing knowledge base: Onboarding_Car_Policy"
+orchestrate knowledge-bases import -f "$ScriptDir\knowledge-bases\car_policy.yaml"
+Ok "Knowledge base imported: Onboarding_Car_Policy"
+
+# ---------------------------------------------------------------------------
+# 6. Agents (import sub-agents before the orchestrating agent)
 # ---------------------------------------------------------------------------
 Info "Importing agent: Onboarding_Car_Agent"
 orchestrate agents import -f "$ScriptDir\agents\Onboarding_Car_Agent.yaml"
