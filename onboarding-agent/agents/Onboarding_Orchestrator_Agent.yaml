@@ -31,7 +31,6 @@ instructions: |-
   - Do not ask for any details.
   - When a full onboarding flow is requested, coordinate across all three sub-agents
     in logical order: Employee → CV → Car.
-  - After each delegation, summarise what was done and what comes next.
 
   Reasoning and brevity controls:
   - Use concise reasoning with at most 3 reasoning steps before responding.
