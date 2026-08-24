@@ -159,7 +159,8 @@ onboarding-app/
 │       │   ├── OnboardingApplication.java    # Main application class
 │       │   ├── controller/                    # REST controllers
 │       │   │   ├── EmployeeController.java
-│       │   │   └── CarController.java
+│       │   │   ├── CarController.java
+│       │   │   └── ConfigController.java      # Exposes /api/config for frontend
 │       │   ├── service/                       # Business logic
 │       │   │   ├── EmployeeService.java
 │       │   │   └── CarService.java
@@ -191,7 +192,22 @@ docker build -t employee-onboarding-app:latest .
 ### Run Docker Container
 
 ```bash
-docker run -p 8080:8080 employee-onboarding-app:latest
+# Minimal (uses defaults from application.properties)
+docker run -p 8082:8080 employee-onboarding-app:latest
+
+# With wxO widget configured for a real environment
+docker run -p 8082:8080 \
+  -e WXO_HOST_URL=https://your-wxo-host \
+  -e WXO_ORCHESTRATION_ID=<orchestration-id> \
+  -e WXO_AGENT_ID=<agent-id> \
+  employee-onboarding-app:latest
+```
+
+### Docker Compose
+
+```bash
+# Uses defaults — override any value with a shell env var before running
+WXO_HOST_URL=https://your-wxo-host docker compose up -d
 ```
 
 The Dockerfile uses:
@@ -289,7 +305,24 @@ springdoc.swagger-ui.path=/swagger-ui.html
 
 ### Environment Variables
 
-For containerized deployments:
+For containerized deployments, the three watsonx Orchestrate widget values can be overridden via environment variables (Spring Boot maps `WXO_HOST_URL` → `wxo.host-url`, etc.):
+
+| Environment variable | Default | Description |
+|---|---|---|
+| `WXO_HOST_URL` | `http://localhost:3000` | Base URL of the wxO runtime that serves `wxoLoader.js` |
+| `WXO_ORCHESTRATION_ID` | `906a1a1a-…` | wxO orchestration / tenant ID |
+| `WXO_AGENT_ID` | `aab9725b-…` | wxO agent ID shown in the chat widget |
+
+```bash
+# Example — run with production values
+docker run -p 8082:8080 \
+  -e WXO_HOST_URL=https://your-wxo-host \
+  -e WXO_ORCHESTRATION_ID=<prod-orchestration-id> \
+  -e WXO_AGENT_ID=<prod-agent-id> \
+  employee-onboarding-app:latest
+```
+
+Other useful variables:
 
 ```bash
 JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"

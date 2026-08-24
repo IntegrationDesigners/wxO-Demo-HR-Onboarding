@@ -18,7 +18,7 @@ wxO-Demo-HR-Onboarding/
 │   ├── src/
 │   │   └── main/
 │   │       ├── java/com/demo/onboarding/
-│   │       │   ├── controller/       # EmployeeController, CarController
+│   │       │   ├── controller/       # EmployeeController, CarController, ConfigController
 │   │       │   ├── service/          # EmployeeService, CarService
 │   │       │   ├── model/            # Employee, Car
 │   │       │   └── config/           # OpenApiConfig
@@ -221,6 +221,19 @@ cd onboarding-app
 docker build -t employee-onboarding-app:latest .
 docker run -d -p 8082:8080 employee-onboarding-app:latest
 ```
+
+Or with docker compose (supports `.env` file overrides):
+
+```bash
+cd onboarding-app
+docker compose up -d
+```
+
+| Environment variable | Default | Description |
+|---|---|---|
+| `WXO_HOST_URL` | `http://localhost:3000` | Base URL of the wxO runtime that serves `wxoLoader.js` |
+| `WXO_ORCHESTRATION_ID` | `906a1a1a-…` | wxO orchestration / tenant ID |
+| `WXO_AGENT_ID` | `aab9725b-…` | wxO agent ID shown in the chat widget |
 
 ### MCP Server
 

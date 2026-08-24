@@ -7,4 +7,8 @@ services:
     container_name: onboarding-app
     ports:
       - "8082:8080"
+    environment:
+      - WXO_HOST_URL=${WXO_HOST_URL:-http://localhost:3000}
+      - WXO_ORCHESTRATION_ID=${WXO_ORCHESTRATION_ID:-906a1a1a-9de4-468d-aa65-78bd57c9677b}
+      - WXO_AGENT_ID=${WXO_AGENT_ID:-aab9725b-709e-4e01-b40a-bf56e47e9625}
     restart: unless-stopped

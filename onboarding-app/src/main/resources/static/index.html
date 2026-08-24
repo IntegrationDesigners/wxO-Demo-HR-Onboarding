@@ -248,13 +248,98 @@
         .price-3 { background: #fff3e0; color: #e65100; }
         .price-4 { background: #fce4ec; color: #c2185b; }
     </style>
+
+    <!-- wxO Chat — onboarding theme (matches dashboard palette) -->
+    <style>
+        /* ── Header banner: scrolling onboarding news ticker ── */
+        .WxOChatContainer.WxOChatReset.WxOChatStyles .CustomHeaderBanner {
+            display: flex;
+            align-items: center;
+            padding: 10px 40px 10px 16px;
+            background: #0f1f3d;
+            color: #e8eaf6;
+            font-size: 13px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.12);
+            position: relative;
+            overflow: hidden;
+        }
+        .WxOChatContainer.WxOChatReset.WxOChatStyles .CustomHeaderBanner-track {
+            display: flex;
+            gap: 48px;
+            white-space: nowrap;
+            animation: bannerScroll 18s linear infinite;
+        }
+        .WxOChatContainer.WxOChatReset.WxOChatStyles .CustomHeaderBanner-item {
+            flex-shrink: 0;
+        }
+        @keyframes bannerScroll {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* ── Welcome section: dark navy — high contrast against purple page bg ── */
+        .WxOChatContainer.WxOChatReset.WxOChatStyles .WxOChat-welcome-component {
+            padding: 0;
+            margin: 0;
+        }
+        .WxOChatContainer.WxOChatReset.WxOChatStyles .onboarding-welcome-section {
+            text-align: center;
+            padding: 36px 24px 28px;
+            /* background: #0f1f3d; */
+        }
+        .WxOChatContainer.WxOChatReset.WxOChatStyles .onboarding-logo img {
+            width: 72px;
+            height: 72px;
+            margin-bottom: 14px;
+            border-radius: 50%;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+        }
+        .WxOChatContainer.WxOChatReset.WxOChatStyles .onboarding-welcome-text {
+            font-size: 18px;
+            font-weight: 600;
+            /* color: #ffffff; */
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        /* ── Prompt chips: white cards on light grey, dark text ── */
+        .WxOChatContainer.WxOChatReset.WxOChatStyles .WxOChat-welcome-component__prompts-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 16px 16px 24px;
+            /* background: #ffffff; */
+        }
+        .WxOChatContainer.WxOChatReset.WxOChatStyles .WxOChat-welcome-component__prompts-tile {
+            /* background: #f4f5f9; */
+            border: 1px solid #d0d4e8;
+            border-radius: 8px;
+            padding: 12px 20px;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(15, 31, 61, 0.1);
+            transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .WxOChatContainer.WxOChatReset.WxOChatStyles .WxOChat-welcome-component__prompts-tile:hover {
+            /* background: #e8ecf8; */
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(15, 31, 61, 0.15);
+        }
+        .WxOChatContainer.WxOChatReset.WxOChatStyles .WxOChat-welcome-component__prompts-tile-text {
+            font-size: 14px;
+            color: #0f1f3d;
+            font-weight: 500;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+    </style>
 </head>
 <body>
-    <div id="root">
+    <div id="dashboard">
         <div class="container">
             <div class="loading">Loading dashboard...</div>
         </div>
     </div>
+    <div id="root"></div>
 
     <script>
         // Vanilla JavaScript implementation
@@ -326,7 +411,7 @@
         }
 
         function renderError(message) {
-            document.getElementById('root').innerHTML = `
+            document.getElementById('dashboard').innerHTML = `
                 <div class="container">
                     <div class="error">
                         <strong>Error:</strong> ${message}
@@ -392,7 +477,7 @@
                 </tr>
             `).join('');
 
-            document.getElementById('root').innerHTML = `
+            document.getElementById('dashboard').innerHTML = `
                 <div class="container">
                     <div class="header">
                         <div class="header-content">
@@ -483,6 +568,93 @@
 
         // Auto-refresh every 30 seconds
         setInterval(fetchData, 30000);
+    </script>
+
+    <script>
+        function setupWelcomeScreen(instance) {
+            var chatWelcomeComponent = instance.getWriteableElement('chatWelcomeComponent');
+            chatWelcomeComponent.innerHTML = '\
+                <div class="WxOChat-welcome-component__prompts">\
+                    <div class="onboarding-welcome-section">\
+                        <div class="onboarding-logo">\
+                            <img src="onboarding.png" alt="Onboarding logo">\
+                        </div>\
+                        <h1 class="onboarding-welcome-text">Welcome to HR Onboarding! How can I help you?</h1>\
+                    </div>\
+                    <div class="WxOChat-welcome-component__prompts-stack">\
+                        <div class="WxOChat-welcome-component__prompts-tile" tabindex="0" role="button" data-prompt="What can you help me with?">\
+                            <div class="WxOChat-welcome-component__prompts-tile-content">\
+                                <span class="WxOChat-welcome-component__prompts-tile-text">What can you help me with?</span>\
+                            </div>\
+                        </div>\
+                        <div class="WxOChat-welcome-component__prompts-tile" tabindex="0" role="button" data-prompt="Onboard a new employee">\
+                            <div class="WxOChat-welcome-component__prompts-tile-content">\
+                                <span class="WxOChat-welcome-component__prompts-tile-text">Onboard a new employee</span>\
+                            </div>\
+                        </div>\
+                        <div class="WxOChat-welcome-component__prompts-tile" tabindex="0" role="button" data-prompt="Convert a CV">\
+                            <div class="WxOChat-welcome-component__prompts-tile-content">\
+                                <span class="WxOChat-welcome-component__prompts-tile-text">Convert a CV</span>\
+                            </div>\
+                        </div>\
+                        <div class="WxOChat-welcome-component__prompts-tile" tabindex="0" role="button" data-prompt="Assign a company car">\
+                            <div class="WxOChat-welcome-component__prompts-tile-content">\
+                                <span class="WxOChat-welcome-component__prompts-tile-text">Assign a company car</span>\
+                            </div>\
+                        </div>\
+                    </div>\
+                </div>';
+            var promptTiles = chatWelcomeComponent.querySelectorAll('.WxOChat-welcome-component__prompts-tile');
+            promptTiles.forEach(function(tile) {
+                tile.addEventListener('click', function() {
+                    var promptText = tile.getAttribute('data-prompt');
+                    if (promptText) instance.send(promptText);
+                });
+                tile.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        var promptText = tile.getAttribute('data-prompt');
+                        if (promptText) instance.send(promptText);
+                    }
+                });
+            });
+        }
+
+        function onChatLoad(instance) {
+            instance.updateWelcomeScreen({
+                welcomeMessage: null,
+                description: null,
+                showTimestamp: false,
+                starterPrompts: null
+            });
+            setupWelcomeScreen(instance);
+        }
+
+        // Load wxO configuration from the server so that orchestrationID,
+        // hostURL and agentId are driven by environment variables instead of
+        // being hard-coded in this static file.
+        fetch('/api/config')
+            .then(function(res) { return res.json(); })
+            .then(function(cfg) {
+                window.wxOConfiguration = {
+                    orchestrationID: cfg.orchestrationID,
+                    hostURL: cfg.hostURL,
+                    rootElementID: 'root',
+                    chatOptions: {
+                        agentId: cfg.agentId,
+                        onLoad: onChatLoad
+                    }
+                };
+                var script = document.createElement('script');
+                script.src = cfg.hostURL + '/wxoLoader.js?embed=true';
+                script.addEventListener('load', function() {
+                    wxoLoader.init();
+                });
+                document.head.appendChild(script);
+            })
+            .catch(function(err) {
+                console.error('Failed to load wxO configuration:', err);
+            });
     </script>
 </body>
 </html>
