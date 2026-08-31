@@ -69,7 +69,30 @@ orchestrate knowledge-bases import -f "$ScriptDir\knowledge-bases\car_policy.yam
 Ok "Knowledge base imported: Onboarding_Car_Policy"
 
 # ---------------------------------------------------------------------------
-# 6. Agents (import sub-agents before the orchestrating agent)
+# 6. Skills (import before agents that reference them)
+# ---------------------------------------------------------------------------
+Info "Importing skill: onboarding-employee-lookup-skill"
+orchestrate skills import --dir "$ScriptDir\skills\onboarding_employee_lookup_skill"
+Ok "Skill imported: onboarding-employee-lookup-skill"
+
+Info "Importing skill: onboarding-slack-notification-skill"
+orchestrate skills import --dir "$ScriptDir\skills\onboarding_slack_notification_skill"
+Ok "Skill imported: onboarding-slack-notification-skill"
+
+Info "Importing skill: onboarding-car-assignment-skill"
+orchestrate skills import --dir "$ScriptDir\skills\onboarding_car_assignment_skill"
+Ok "Skill imported: onboarding-car-assignment-skill"
+
+Info "Importing skill: onboarding-car-unassignment-skill"
+orchestrate skills import --dir "$ScriptDir\skills\onboarding_car_unassignment_skill"
+Ok "Skill imported: onboarding-car-unassignment-skill"
+
+Info "Importing skill: onboarding-status-reset-skill"
+orchestrate skills import --dir "$ScriptDir\skills\onboarding_status_reset_skill"
+Ok "Skill imported: onboarding-status-reset-skill"
+
+# ---------------------------------------------------------------------------
+# 7. Agents (import sub-agents before the orchestrating agent)
 # ---------------------------------------------------------------------------
 Info "Importing agent: Onboarding_Car_Agent"
 orchestrate agents import -f "$ScriptDir\agents\Onboarding_Car_Agent.yaml"

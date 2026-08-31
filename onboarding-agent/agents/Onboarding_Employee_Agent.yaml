@@ -20,8 +20,6 @@ instructions: |-
   Behavior and sources:
   - Identify as an agent for the Integration Designers team responsible for employee onboarding.
   - Always use available tools; never make up employee data.
-  - onboarding_updateEmployeeStatus is used exclusively to reset (clear) a status field, passing exactly one flag set to false: either cvStatus=false or carStatus=false — never true, never both.
-  - After successfully resetting a status, send a Slack notification via onboarding_send_slack_message that includes the employee name and which status was reset.
 
   Reasoning and brevity controls:
   - Use concise reasoning.
@@ -36,32 +34,18 @@ guidelines:
   action: |-
     Call the employee_onboarding flow. This is a self-contained interactive flow that guides the user through all required registration steps — do not collect any information before invoking it and do not perform any additional steps afterwards.
   tool: employee_onboarding
-- display_name: Reset CV status
-  condition: When asked to clear, reset, or undo an employee's CV status
-  action: |-
-    Perform the following steps in order:
-    1. If only an employee name was provided, call onboarding_getAllEmployees to resolve their ID.
-    2. Call onboarding_updateEmployeeStatus with the employee ID and cvStatus=false.
-    3. Send a Slack notification via onboarding_send_slack_message confirming that the CV status has been reset for the employee.
-- display_name: Reset car provisioning status
-  condition: When asked to clear, reset, or undo an employee's car provisioning status
-  action: |-
-    Perform the following steps in order:
-    1. If only an employee name was provided, call onboarding_getAllEmployees to resolve their ID.
-    2. Call onboarding_updateEmployeeStatus with the employee ID and carStatus=false.
-    3. Send a Slack notification via onboarding_send_slack_message confirming that the car provisioning status has been reset for the employee.
 collaborators: []
 tools:
 - employee_onboarding
-#- onboarding-app:update_employee_status
-#- onboarding-app:get_employee
-#- onboarding-app:list_employees
-- onboarding_updateEmployeeStatus
 - onboarding_getEmployee
 - onboarding_getAllEmployees
+- onboarding_updateEmployeeStatus
 - onboarding_send_slack_message
 toolkits: []
-skills: []
+skills:
+- onboarding-employee-lookup-skill
+- onboarding-slack-notification-skill
+- onboarding-status-reset-skill
 plugins:
   agent_pre_invoke: []
   agent_post_invoke: []

@@ -44,6 +44,15 @@ wxO-Demo-HR-Onboarding/
     │   ├── car_policy.yaml
     │   └── documents/
     │       └── car_policy.txt
+    ├── skills/                   # Agent skill definitions (SKILL.md)
+    │   ├── onboarding_employee_lookup_skill/
+    │   │   └── SKILL.md          # Resolves employee names to IDs; retrieves employee records
+    │   ├── onboarding_slack_notification_skill/
+    │   │   └── SKILL.md          # Sends post-operation Slack notifications
+    │   ├── onboarding_car_policy_skill/
+    │   │   └── SKILL.md          # Applies car policy to filter eligible cars by salary bracket
+    │   └── onboarding_status_reset_skill/
+    │       └── SKILL.md          # Resets CV or car provisioning status for an employee
     ├── toolkits/                 # MCP toolkit specs (reference / optional)
     │   └── onboarding-app.local.yaml
     ├── tools/                    # Flow tools (JSON), Python tools, OpenAPI spec
@@ -123,20 +132,21 @@ The scripts execute the following steps in order:
 | 3 | Import dummy Slack flow tool (`onboarding_send_slack_message`) |
 | 4 | Import Python tool: `populate_word_template` |
 | 5 | Import knowledge base: `Onboarding_Car_Policy` |
-| 6 | Import agents: `Onboarding_Car_Agent`, `Onboarding_CV_Agent`, `Onboarding_Employee_Agent` |
-| 7 | Import orchestrator agent: `Onboarding_Orchestrator_Agent` (must be imported after all sub-agents) |
+| 6 | Import skills: `onboarding_employee_lookup_skill`, `onboarding_slack_notification_skill`, `onboarding_car_policy_skill`, `onboarding_status_reset_skill` |
+| 7 | Import agents: `Onboarding_Car_Agent`, `Onboarding_CV_Agent`, `Onboarding_Employee_Agent` |
+| 8 | Import orchestrator agent: `Onboarding_Orchestrator_Agent` (must be imported after all sub-agents) |
 
 ---
 
 ## watsonx Orchestrate Agents
 
-The agent layer follows an orchestrator / sub-agent pattern. HR staff interact exclusively with the **Onboarding Orchestrator**, which delegates tasks to the three specialist sub-agents.
+The agent layer follows an orchestrator / sub-agent pattern. HR staff interact exclusively with the **Onboarding Orchestrator**, which delegates tasks to the three specialist sub-agents. Cross-cutting capabilities (employee lookup, Slack notifications, car policy, and status resets) are factored into reusable **agent skills** shared across sub-agents.
 
 ```
 Onboarding_Orchestrator_Agent
-├── Onboarding_Employee_Agent
-├── Onboarding_CV_Agent
-└── Onboarding_Car_Agent
+├── Onboarding_Employee_Agent  (skills: lookup · slack · status-reset)
+├── Onboarding_CV_Agent        (skills: lookup · slack)
+└── Onboarding_Car_Agent       (skills: lookup · slack · car-policy)
 ```
 
 ### Onboarding_Orchestrator_Agent
@@ -147,33 +157,50 @@ The top-level agent used by **HR staff**. It routes requests to the correct sub-
 
 ### Onboarding_Employee_Agent
 
-Handles employee registration, listing, and onboarding status updates. After any status change it notifies Slack.
+Handles employee registration and onboarding status resets.
 
-**Tools:** `employee_onboarding` · `onboarding_updateEmployeeStatus` · `onboarding_getEmployee` · `onboarding_getAllEmployees` · `onboarding_send_slack_message`
+**Tools:** `employee_onboarding`
+
+**Skills:** `onboarding_employee_lookup_skill` · `onboarding_slack_notification_skill` · `onboarding_status_reset_skill`
 
 ### Onboarding_Car_Agent
 
-Handles car provisioning: listing, assignment/unassignment, and status updates. After a car is assigned it notifies Slack. Uses the `Onboarding_Car_Policy` knowledge base to answer policy questions about car eligibility and entitlements.
+Handles car provisioning: listing, assignment/unassignment, and status updates. Uses the car policy skill to determine eligible cars by salary bracket.
 
-**Tools:** `onboarding_getCar` · `onboarding_getAllCars` · `onboarding_getAvailableCars` · `onboarding_assignCarToEmployee` · `onboarding_unassignCarFromEmployee` · `onboarding_getAllEmployees` · `onboarding_getEmployee` · `onboarding_send_slack_message`
+**Tools:** `onboarding_getCar` · `onboarding_getAllCars` · `onboarding_assignCarToEmployee` · `onboarding_unassignCarFromEmployee`
 
-**Knowledge base:** `Onboarding_Car_Policy`
+**Skills:** `onboarding_employee_lookup_skill` · `onboarding_slack_notification_skill` · `onboarding_car_policy_skill`
 
 ### Onboarding_CV_Agent
 
-Handles CV conversion and status tracking. After a CV is created it notifies Slack.
+Handles CV conversion and status tracking.
 
-**Tools:** `onboarding_cv_converter` · `onboarding_updateCvStatus` · `onboarding_getEmployee` · `onboarding_getAllEmployees` · `onboarding_send_slack_message`
+**Tools:** `onboarding_cv_converter` · `onboarding_updateCvStatus`
+
+**Skills:** `onboarding_employee_lookup_skill` · `onboarding_slack_notification_skill`
 
 ---
+
+## watsonx Orchestrate Skills
+
+Skills are reusable instruction bundles (a `SKILL.md` file per skill) that an agent loads on demand. Each skill declares a `description` (used by the agent to select the right skill), optional `allowed-tools`, and a Markdown procedure body.
+
+| Skill | Allowed tools | Used by |
+|---|---|---|
+| `onboarding_employee_lookup_skill` | `onboarding_getEmployee` · `onboarding_getAllEmployees` | Employee · CV · Car agents |
+| `onboarding_slack_notification_skill` | `onboarding_send_slack_message` | Employee · CV · Car agents |
+| `onboarding_car_policy_skill` | `onboarding_getAvailableCars` | Car agent |
+| `onboarding_status_reset_skill` | `onboarding_updateEmployeeStatus` · `onboarding_getAllEmployees` | Employee agent |
+
+Skills are imported with `orchestrate skills import --dir` **before** the agents that reference them.
 
 ## watsonx Orchestrate Knowledge Bases
 
 | Knowledge Base | Source document | Used by |
 |---|---|---|
-| `Onboarding_Car_Policy` | [`knowledge-bases/documents/car_policy.txt`](onboarding-agent/knowledge-bases/documents/car_policy.txt) | `Onboarding_Car_Agent` |
+| `Onboarding_Car_Policy` | [`knowledge-bases/documents/car_policy.txt`](onboarding-agent/knowledge-bases/documents/car_policy.txt) | `Onboarding_Car_Agent` (queried by `onboarding-car-policy-skill`) |
 
-The knowledge base is imported with `orchestrate knowledge-bases import` using the spec file [`knowledge-bases/car_policy.yaml`](onboarding-agent/knowledge-bases/car_policy.yaml). It allows the Car Agent to answer natural-language questions about the company car policy (eligibility criteria, allowed models, fuel card rules, etc.) without hard-coding that information in the agent instructions.
+The knowledge base is imported with `orchestrate knowledge-bases import` using the spec file [`knowledge-bases/car_policy.yaml`](onboarding-agent/knowledge-bases/car_policy.yaml). It is attached directly to `Onboarding_Car_Agent` and queried by the `onboarding-car-policy-skill` procedure to determine the car price range allowed for an employee's salary bracket.
 
 ---
 

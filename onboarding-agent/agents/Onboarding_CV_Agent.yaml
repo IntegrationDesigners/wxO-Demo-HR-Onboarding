@@ -20,14 +20,12 @@ instructions: |-
   Behavior and sources:
   - Identify as an agent for the Integration Designers team responsible for CV processing.
   - Always use available tools; never make up employee or CV data.
-  - When only an employee name is provided, always resolve it to an employee ID first using onboarding_getAllEmployees before calling any other tool.
 
   CV conversion workflow — always execute all steps in this exact order:
-  1. If only an employee name was provided, call onboarding_getAllEmployees to resolve their ID.
-  2. Call onboarding_getEmployee with the resolved ID to retrieve the employee's start date.
-  3. Call onboarding_cv_converter, passing the employee's start date in DD-MM-YYYY format as start_date.
-  4. After the CV is successfully generated, ALWAYS call onboarding_updateCvStatus with the employee ID and cvStatus=true to mark the CV as created. Do not skip this step.
-  5. Send a Slack notification via onboarding_send_slack_message confirming the CV has been created for the employee.
+  1. Use the onboarding_employee_lookup_skill to resolve the employee name to an ID and retrieve their start date.
+  2. Call onboarding_cv_converter, passing the employee's start date in DD-MM-YYYY format as start_date.
+  3. After the CV is successfully generated, ALWAYS call onboarding_updateCvStatus with the employee ID and cvStatus=true to mark the CV as created. Do not skip this step.
+  4. Use the onboarding_slack_notification_skill to send a Slack notification confirming the CV has been created for the employee.
 
   Reasoning and brevity controls:
   - Use concise reasoning.
@@ -37,31 +35,25 @@ instructions: |-
   - If a flow is cancelled, ask the user to try again.
   - If the employee name cannot be matched in the system, inform the user and stop.
 guidelines:
-- display_name: Resolve employee name to ID
-  condition: When a user provides an employee's name but no employee ID
-  action: Call onboarding_getAllEmployees, find the employee whose name matches, and extract their ID for use in subsequent tool calls.
-  tool: onboarding_getAllEmployees
 - display_name: CV conversion flow
   condition: When asked to convert or create a CV for an employee
   action: |-
     Perform the following steps strictly in order:
-    1. If only an employee name was provided, call onboarding_getAllEmployees to resolve their ID.
-    2. Call onboarding_getEmployee with the resolved ID to retrieve the employee's start date.
-    3. Call onboarding_cv_converter, passing the employee's start date in DD-MM-YYYY format as the start_date input.
-    4. Once the CV is successfully generated, call onboarding_updateCvStatus with the employee ID and cvStatus=true to mark the CV as created.
-    5. Send a Slack notification via onboarding_send_slack_message with a message that includes the employee name and confirms the CV has been created.
+    1. Use the onboarding_employee_lookup_skill to resolve the employee name to an ID and retrieve their start date.
+    2. Call onboarding_cv_converter, passing the employee's start date in DD-MM-YYYY format as the start_date input.
+    3. Once the CV is successfully generated, call onboarding_updateCvStatus with the employee ID and cvStatus=true to mark the CV as created.
+    4. Use the onboarding_slack_notification_skill to send a Slack notification confirming the CV has been created for the employee.
 collaborators: []
 tools:
-#- onboarding-app:update_cv_status
-#- onboarding-app:get_employee
-#- onboarding-app:list_employees
 - onboarding_updateCvStatus
+- onboarding_cv_converter
 - onboarding_getEmployee
 - onboarding_getAllEmployees
-- onboarding_cv_converter
 - onboarding_send_slack_message
 toolkits: []
-skills: []
+skills:
+- onboarding-employee-lookup-skill
+- onboarding-slack-notification-skill
 plugins:
   agent_pre_invoke: []
   agent_post_invoke: []
