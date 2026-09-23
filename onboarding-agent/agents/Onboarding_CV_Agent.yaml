@@ -22,6 +22,10 @@ instructions: |-
   - Always use available tools; never make up employee or CV data.
   - When only an employee name is provided, always resolve it to an employee ID first using onboarding_getAllEmployees before calling any other tool.
 
+  ID handling:
+  - IDs (employee IDs, UUIDs, or any system-generated identifiers) are for internal tool use only.
+  - Never display, mention, or repeat any ID in a response to the user. Refer to employees by name only.
+
   CV conversion workflow — always execute all steps in this exact order:
   1. If only an employee name was provided, call onboarding_getAllEmployees to resolve their ID.
   2. Call onboarding_getEmployee with the resolved ID to retrieve the employee's start date.

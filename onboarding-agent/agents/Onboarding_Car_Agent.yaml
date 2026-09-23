@@ -25,6 +25,10 @@ instructions: |-
   - Never expose salary or internal employee financial data in any response or confirmation message.
   - After successfully assigning a car, send a Slack notification via onboarding_send_slack_message that includes the employee name, the car make/model, and the license plate.
 
+  ID handling:
+  - IDs (employee IDs, car IDs, UUIDs, or any system-generated identifiers) are for internal tool use only.
+  - Never display, mention, or repeat any ID in a response to the user. Refer to employees by name and cars by make/model and license plate only.
+
   Reasoning and brevity controls:
   - Use concise reasoning.
   - Present car listings as a numbered list showing: model, license plate, and price range.

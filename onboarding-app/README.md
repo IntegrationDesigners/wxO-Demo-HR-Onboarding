@@ -200,6 +200,7 @@ docker run -p 8082:8080 \
   -e WXO_HOST_URL=https://your-wxo-host \
   -e WXO_ORCHESTRATION_ID=<orchestration-id> \
   -e WXO_AGENT_ID=<agent-id> \
+  -e WXO_AGENT_ENVIRONMENT_ID=<agent-environment-id> \
   employee-onboarding-app:latest
 ```
 
@@ -305,13 +306,14 @@ springdoc.swagger-ui.path=/swagger-ui.html
 
 ### Environment Variables
 
-For containerized deployments, the three watsonx Orchestrate widget values can be overridden via environment variables (Spring Boot maps `WXO_HOST_URL` → `wxo.host-url`, etc.):
+For containerized deployments, the watsonx Orchestrate widget values can be overridden via environment variables (Spring Boot maps `WXO_HOST_URL` → `wxo.host-url`, etc.):
 
 | Environment variable | Default | Description |
 |---|---|---|
 | `WXO_HOST_URL` | `http://localhost:3000` | Base URL of the wxO runtime that serves `wxoLoader.js` |
 | `WXO_ORCHESTRATION_ID` | `906a1a1a-…` | wxO orchestration / tenant ID |
 | `WXO_AGENT_ID` | `aab9725b-…` | wxO agent ID shown in the chat widget |
+| `WXO_AGENT_ENVIRONMENT_ID` | _(empty)_ | Optional — wxO agent environment ID passed to `chatOptions.agentEnvironmentId` |
 
 ```bash
 # Example — run with production values
@@ -319,6 +321,7 @@ docker run -p 8082:8080 \
   -e WXO_HOST_URL=https://your-wxo-host \
   -e WXO_ORCHESTRATION_ID=<prod-orchestration-id> \
   -e WXO_AGENT_ID=<prod-agent-id> \
+  -e WXO_AGENT_ENVIRONMENT_ID=<agent-environment-id> \
   employee-onboarding-app:latest
 ```
 

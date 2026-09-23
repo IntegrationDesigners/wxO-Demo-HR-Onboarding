@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -29,13 +30,38 @@ public class ConfigController {
     @Value("${wxo.agent-id}")
     private String wxoAgentId;
 
+    @Value("${wxo.deployment-platform:}")
+    private String wxoDeploymentPlatform;
+
+    @Value("${wxo.crn:}")
+    private String wxoCrn;
+
+    @Value("${wxo.agent-environment-id:}")
+    private String wxoAgentEnvironmentId;
+
     @GetMapping
     @Operation(summary = "Get frontend configuration", description = "Returns environment-specific configuration values used by the wxO chat widget.")
     public ResponseEntity<Map<String, String>> getConfig() {
-        return ResponseEntity.ok(Map.of(
-            "hostURL", wxoHostUrl,
-            "orchestrationID", wxoOrchestrationId,
-            "agentId", wxoAgentId
-        ));
+        Map<String, String> config = new HashMap<>();
+        config.put("hostURL", wxoHostUrl);
+        config.put("orchestrationID", wxoOrchestrationId);
+        config.put("agentId", wxoAgentId);
+
+        boolean hasDeploymentPlatform = wxoDeploymentPlatform != null && !wxoDeploymentPlatform.isBlank();
+        String loaderURL = hasDeploymentPlatform
+                ? wxoHostUrl + "/wxochat/wxoLoader.js?embed=true"
+                : wxoHostUrl + "/wxoLoader.js?embed=true";
+        config.put("loaderURL", loaderURL);
+
+        if (hasDeploymentPlatform) {
+            config.put("deploymentPlatform", wxoDeploymentPlatform);
+        }
+        if (wxoCrn != null && !wxoCrn.isBlank()) {
+            config.put("crn", wxoCrn);
+        }
+        if (wxoAgentEnvironmentId != null && !wxoAgentEnvironmentId.isBlank()) {
+            config.put("agentEnvironmentId", wxoAgentEnvironmentId);
+        }
+        return ResponseEntity.ok(config);
     }
 }

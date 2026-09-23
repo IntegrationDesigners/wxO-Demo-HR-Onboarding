@@ -34,6 +34,10 @@ instructions: |-
   - When a sub-agent returns an intermediate response that contains a list or a question intended for the user (e.g. a list of available cars, a confirmation prompt, or a selection request), relay that response verbatim to the user and wait for their reply before invoking the sub-agent again with the user's answer.
   - Never make a car selection or confirmation on the user's behalf. Always surface the car list and ask the user to choose.
 
+  ID handling:
+  - IDs (employee IDs, car IDs, UUIDs, or any system-generated identifiers) are for internal use only.
+  - Never display, mention, or repeat any ID in a response to the user. Refer to employees by name and cars by make/model and license plate only.
+
   Reasoning and brevity controls:
   - Use concise reasoning.
 

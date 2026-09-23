@@ -625,7 +625,7 @@
                 welcomeMessage: null,
                 description: null,
                 showTimestamp: false,
-                starterPrompts: null
+                starterPrompts: null,
             });
             setupWelcomeScreen(instance);
         }
@@ -639,14 +639,23 @@
                 window.wxOConfiguration = {
                     orchestrationID: cfg.orchestrationID,
                     hostURL: cfg.hostURL,
-                    rootElementID: 'root',
-                    chatOptions: {
-                        agentId: cfg.agentId,
-                        onLoad: onChatLoad
-                    }
+                    rootElementID: 'root'
                 };
+                if (cfg.deploymentPlatform) {
+                    window.wxOConfiguration.deploymentPlatform = cfg.deploymentPlatform;
+                }
+                if (cfg.crn) {
+                    window.wxOConfiguration.crn = cfg.crn;
+                }
+                window.wxOConfiguration.chatOptions = {
+                    agentId: cfg.agentId,
+                    onLoad: onChatLoad
+                };
+                if (cfg.agentEnvironmentId) {
+                    window.wxOConfiguration.chatOptions.agentEnvironmentId = cfg.agentEnvironmentId;
+                }
                 var script = document.createElement('script');
-                script.src = cfg.hostURL + '/wxoLoader.js?embed=true';
+                script.src = cfg.loaderURL;
                 script.addEventListener('load', function() {
                     wxoLoader.init();
                 });

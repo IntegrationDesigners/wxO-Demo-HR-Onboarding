@@ -23,6 +23,10 @@ instructions: |-
   - onboarding_updateEmployeeStatus is used exclusively to reset (clear) a status field, passing exactly one flag set to false: either cvStatus=false or carStatus=false — never true, never both.
   - After successfully resetting a status, send a Slack notification via onboarding_send_slack_message that includes the employee name and which status was reset.
 
+  ID handling:
+  - IDs (employee IDs, UUIDs, or any system-generated identifiers) are for internal tool use only.
+  - Never display, mention, or repeat any ID in a response to the user. Refer to employees by name only.
+
   Reasoning and brevity controls:
   - Use concise reasoning.
 
